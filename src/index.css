@@ -1,0 +1,239 @@
+/* Import Bulma et FontAwesome */
+@import 'bulma/css/bulma.min.css';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
+/* Variables CSS personnalisées */
+:root {
+  --primary-color: #2c5530;
+  --secondary-color: #6b8e6b;
+  --accent-color: #d4af37;
+  --text-dark: #2c3e50;
+  --text-light: #7f8c8d;
+  --background-light: #f8f9fa;
+  --shadow-light: 0 2px 10px rgba(0,0,0,0.1);
+  --shadow-medium: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+/* Styles globaux */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--text-dark);
+  background-color: #ffffff;
+}
+
+/* Personnalisation Bulma */
+.navbar {
+  box-shadow: var(--shadow-light);
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+}
+
+.navbar.is-fixed-top {
+  transition: all 0.3s ease;
+}
+
+.navbar-item:hover {
+  background-color: rgba(44, 85, 48, 0.1) !important;
+  color: var(--primary-color) !important;
+}
+
+.button.is-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.button.is-primary:hover {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.title {
+  color: var(--text-dark);
+}
+
+.subtitle {
+  color: var(--text-light);
+}
+
+/* Styles héro */
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(44, 85, 48, 0.8), rgba(107, 142, 107, 0.6));
+  z-index: 1;
+}
+
+.hero .hero-body {
+  position: relative;
+  z-index: 2;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+/* Cards personnalisées */
+.card {
+  box-shadow: var(--shadow-light);
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-5px);
+}
+
+/* Section */
+.section {
+  padding: 3rem 1.5rem;
+}
+
+.section.is-medium {
+  padding: 4rem 1.5rem;
+}
+
+/* Footer */
+.footer {
+  background-color: var(--text-dark);
+  padding: 3rem 1.5rem 2rem;
+}
+
+.footer .title,
+.footer .subtitle {
+  color: white;
+}
+
+.footer .content {
+  color: #bdc3c7;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .section {
+    padding: 2rem 1rem;
+  }
+  
+  .hero .title {
+    font-size: 2rem !important;
+  }
+  
+  .hero .subtitle {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* Loader */
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+/* Menu styles */
+.menu-item {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 1rem 0;
+  transition: all 0.3s ease;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:hover {
+  background-color: var(--background-light);
+  padding-left: 1rem;
+  border-radius: 8px;
+}
+
+.menu-price {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+/* Plats du jour styles */
+.daily-special {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.daily-special .title,
+.daily-special .subtitle {
+  color: white;
+}
+
+/* Contact form */
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.125em rgba(44, 85, 48, 0.25);
+}
+
+/* Gallery */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: scale(1.05);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.1);
+}

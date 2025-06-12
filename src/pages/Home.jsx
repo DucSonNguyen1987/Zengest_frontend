@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import SEOHead, { SEOPresets } from '../components/SEOHead'
 import HeroSection from '../components/home/HeroSection'
 import DailySpecials from '../components/home/DailySpecials'
 import FeatureSection from '../components/home/FeatureSection'
@@ -7,6 +8,8 @@ import TestimonialsSection from '../components/home/TestimonialsSection'
 const Home = () => {
   return (
     <div className="home-page">
+      <SEOHead {...SEOPresets.home} />
+      
       {/* Hero Section */}
       <HeroSection />
 
@@ -121,4 +124,4 @@ const Home = () => {
   )
 }
 
-export default Home;
+export default Home

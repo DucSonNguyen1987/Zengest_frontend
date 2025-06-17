@@ -1,0 +1,20 @@
+{
+  "name": "zengest-frontend",
+  "version": "1.0.0",
+  "workspaces": [
+    "web-admin",
+    "site-vitrine", 
+    "shared"
+  ],
+  "scripts": {
+    "dev:web-admin": "cd web-admin && npm run dev",
+    "dev:site-vitrine": "cd site-vitrine && npm run dev", 
+    "build:web-admin": "cd web-admin && npm run build",
+    "build:site-vitrine": "cd site-vitrine && npm run build",
+    "install:all": "npm install",
+    "dev:all": "concurrently \"npm run dev:web-admin\" \"npm run dev:site-vitrine\""
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}

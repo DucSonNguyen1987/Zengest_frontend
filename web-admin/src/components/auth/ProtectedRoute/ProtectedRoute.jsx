@@ -21,7 +21,7 @@ import {
 } from '@/store/slices/authSlice';
 
 // Composants
-import PageLoader from '@/components/common/Loading/PageLoader';
+//import PageLoader from '@/components/common/Loading/PageLoader';
 
 // ========================================
 // 🛡️ COMPOSANT ROUTE PROTÉGÉE

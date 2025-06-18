@@ -3,16 +3,16 @@
   "version": "1.0.0",
   "workspaces": [
     "web-admin",
-    "website", 
+    "website",
     "shared"
   ],
   "scripts": {
     "dev:web-admin": "cd web-admin && npm run dev",
-    "dev:site-vitrine": "cd site-vitrine && npm run dev", 
+    "dev:website": "cd website && npm run dev",
     "build:web-admin": "cd web-admin && npm run build",
-    "build:site-vitrine": "cd site-vitrine && npm run build",
+    "build:website": "cd website && npm run build",
     "install:all": "npm install",
-    "dev:all": "concurrently \"npm run dev:web-admin\" \"npm run dev:site-vitrine\""
+    "dev:all": "concurrently \"npm run dev:web-admin\" \"npm run dev:website\""
   },
   "devDependencies": {
     "concurrently": "^7.6.0"

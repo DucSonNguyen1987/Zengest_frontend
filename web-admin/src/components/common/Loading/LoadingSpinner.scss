@@ -1,0 +1,230 @@
+// web-admin/src/components/common/Loading/LoadingSpinner.scss
+
+// ========================================
+// 🎨 VARIABLES
+// ========================================
+$spinner-primary: #eb2f06;
+$spinner-success: #00d1b2;
+$spinner-warning: #ffc048;
+$spinner-danger: #ff3860;
+$spinner-white: #ffffff;
+
+// ========================================
+// 🔄 SPINNER PRINCIPAL
+// ========================================
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  
+  &--fullscreen {
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 9999;
+  }
+}
+
+.spinner {
+  position: relative;
+  display: inline-block;
+  
+  &__circle {
+    border-radius: 50%;
+    border-style: solid;
+    border-color: transparent;
+    animation: spin 1s linear infinite;
+  }
+  
+  &__message {
+    margin-top: 1rem;
+    color: #4a4a4a;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+}
+
+// ========================================
+// 📏 TAILLES
+// ========================================
+.spinner--small {
+  .spinner__circle {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+  }
+  
+  .spinner__message {
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+  }
+}
+
+.spinner--medium {
+  .spinner__circle {
+    width: 32px;
+    height: 32px;
+    border-width: 3px;
+  }
+}
+
+.spinner--large {
+  .spinner__circle {
+    width: 48px;
+    height: 48px;
+    border-width: 4px;
+  }
+  
+  .spinner__message {
+    font-size: 1rem;
+    margin-top: 1.5rem;
+  }
+}
+
+.spinner--xlarge {
+  .spinner__circle {
+    width: 64px;
+    height: 64px;
+    border-width: 5px;
+  }
+  
+  .spinner__message {
+    font-size: 1.125rem;
+    margin-top: 2rem;
+  }
+}
+
+// ========================================
+// 🎨 COULEURS
+// ========================================
+.spinner--primary .spinner__circle {
+  border-top-color: $spinner-primary;
+  border-right-color: rgba($spinner-primary, 0.3);
+}
+
+.spinner--success .spinner__circle {
+  border-top-color: $spinner-success;
+  border-right-color: rgba($spinner-success, 0.3);
+}
+
+.spinner--warning .spinner__circle {
+  border-top-color: $spinner-warning;
+  border-right-color: rgba($spinner-warning, 0.3);
+}
+
+.spinner--danger .spinner__circle {
+  border-top-color: $spinner-danger;
+  border-right-color: rgba($spinner-danger, 0.3);
+}
+
+.spinner--white .spinner__circle {
+  border-top-color: $spinner-white;
+  border-right-color: rgba($spinner-white, 0.3);
+}
+
+// ========================================
+// 📄 PAGE LOADER
+// ========================================
+.page-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  
+  &__content {
+    text-align: center;
+  }
+  
+  &__progress {
+    margin-top: 2rem;
+    width: 200px;
+  }
+}
+
+// ========================================
+// 🔄 SPINNER INLINE (pour boutons)
+// ========================================
+.spinner-inline {
+  display: inline-block;
+  position: relative;
+  margin-right: 0.5rem;
+  
+  &__circle {
+    display: block;
+    border-radius: 50%;
+    border-style: solid;
+    border-color: transparent;
+    animation: spin 1s linear infinite;
+  }
+}
+
+.spinner-inline--small {
+  .spinner-inline__circle {
+    width: 12px;
+    height: 12px;
+    border-width: 1.5px;
+  }
+}
+
+.spinner-inline--medium {
+  .spinner-inline__circle {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+  }
+}
+
+.spinner-inline--large {
+  .spinner-inline__circle {
+    width: 20px;
+    height: 20px;
+    border-width: 2.5px;
+  }
+}
+
+.spinner-inline--white .spinner-inline__circle {
+  border-top-color: $spinner-white;
+  border-right-color: rgba($spinner-white, 0.3);
+}
+
+.spinner-inline--primary .spinner-inline__circle {
+  border-top-color: $spinner-primary;
+  border-right-color: rgba($spinner-primary, 0.3);
+}
+
+// ========================================
+// 🔄 ANIMATION
+// ========================================
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// ========================================
+// 📱 RESPONSIVE
+// ========================================
+@media screen and (max-width: 768px) {
+  .spinner-container {
+    padding: 1rem;
+  }
+  
+  .page-loader__progress {
+    width: 150px;
+  }
+}

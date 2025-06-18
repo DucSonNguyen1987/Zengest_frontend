@@ -21,10 +21,10 @@ import { selectResponsive, selectSidebar, selectTheme } from '@/store/slices/uiS
 
 // Hooks
 import { useAuthCheck } from '@/hooks/auth/useAuthCheck';
-import { useWebSocketConnection } from '@/hooks/useWebSocket';
+import { useWebSocketConnection } from '@/hooks/api/useWebSocket';
 
 // Styles
-import './Layout.scss';
+//import './Layout.scss';
 
 // ========================================
 // 🏗️ COMPOSANT LAYOUT PRINCIPAL

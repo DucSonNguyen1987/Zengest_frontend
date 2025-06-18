@@ -39,10 +39,10 @@ import {
 
 // Composants
 import SidebarSection from './SidebarSection';
-import SidebarItem from './SidebarItem';
+//import SidebarItem from './SidebarItem';
 
 // Styles
-import './Sidebar.scss';
+//import './Sidebar.scss';
 
 // ========================================
 // 📋 CONFIGURATION DE LA NAVIGATION

@@ -48,11 +48,11 @@ import { useDebounce } from '@/hooks/ui/useDebounce';
 
 // Composants
 import SearchResults from './SearchResults';
-import NotificationDropdown from './NotificationDropdown';
-import UserDropdown from './UserDropdown';
+//import NotificationDropdown from './NotificationDropdown';
+//import UserDropdown from './UserDropdown';
 
 // Styles
-import './Header.scss';
+//import './Header.scss';
 
 // ========================================
 // 🏗️ COMPOSANT HEADER

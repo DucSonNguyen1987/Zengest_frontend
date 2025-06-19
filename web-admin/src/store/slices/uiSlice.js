@@ -1,12 +1,11 @@
-// sGestion de l'état de l'interface utilisateur
 import { createSlice } from '@reduxjs/toolkit';
 
 // ========================================
-// 🏪 ÉTAT INITIAL
+// 🎨 ÉTAT INITIAL UI
 // ========================================
 
 const initialState = {
-  // Sidebar et navigation
+  // Sidebar
   sidebar: {
     isOpen: true,
     isCollapsed: false,
@@ -15,37 +14,26 @@ const initialState = {
   },
   
   // Thème et apparence
-  theme: {
-    mode: localStorage.getItem('zengest_admin_theme') || 'light', // light, dark, auto
-    primaryColor: '#eb2f06',
-    accentColor: '#00d2d3',
-    fontSize: 'medium', // small, medium, large
-    density: 'comfortable' // compact, comfortable, spacious
-  },
+  theme: 'light',
+  primaryColor: '#eb2f06',
+  fontSize: 'normal',
+  density: 'comfortable',
   
-  // Modales et overlays
-  modals: {
-    // Structure: { modalId: { isOpen: boolean, data: any, options: {} } }
-  },
+  // Modales
+  modals: {},
   
-  // Notifications et toasts
-  notifications: {
-    list: [],
-    unreadCount: 0,
-    lastChecked: null
-  },
+  // Notifications
+  notifications: [],
   
-  // État de chargement global
+  // États de chargement
   loading: {
     global: false,
     page: false,
-    components: {} // { componentId: boolean }
+    components: {}
   },
   
-  // Configuration de la table/liste
-  tables: {
-    // Structure: { tableId: { pageSize: number, sortBy: string, sortOrder: 'asc'|'desc', filters: {} } }
-  },
+  // Tables
+  tables: {},
   
   // Filtres globaux
   filters: {
@@ -57,38 +45,36 @@ const initialState = {
     status: null
   },
   
-  // Configuration des vues
+  // Vues et layouts
   views: {
     dashboard: {
-      layout: 'grid', // grid, list
-      widgets: ['metrics', 'chart', 'activity', 'actions']
+      layout: 'grid',
+      widgets: ['stats', 'charts', 'recent-activity']
     },
     orders: {
-      view: 'table', // table, kanban, calendar
+      view: 'table',
       groupBy: 'status'
     },
     reservations: {
-      view: 'calendar', // table, calendar, timeline
-      defaultView: 'month'
+      view: 'calendar',
+      timeFrame: 'week'
     }
   },
   
-  // État des formulaires
-  forms: {
-    // Structure: { formId: { isDirty: boolean, hasErrors: boolean, data: {} } }
-  },
+  // Formulaires
+  forms: {},
   
-  // Breadcrumb et navigation
+  // Breadcrumb
   breadcrumb: [
     { label: 'Dashboard', path: '/' }
   ],
   
-  // Recherche globale
+  // Recherche
   search: {
     query: '',
     isActive: false,
     results: [],
-    isLoading: false
+    loading: false
   },
   
   // Paramètres d'affichage
@@ -100,31 +86,42 @@ const initialState = {
     compactMode: false
   },
   
-  // État responsive
+  // Responsive
   responsive: {
     isMobile: false,
     isTablet: false,
     isDesktop: true,
-    screenSize: 'large' // small, medium, large
+    screenSize: 'desktop',
+    orientation: 'landscape'
   },
   
-  // Cache de l'interface
+  // Cache et état de session
   cache: {
     lastRoute: '/',
-    scrollPositions: {}, // { route: scrollY }
-    tabStates: {} // { pageId: activeTabId }
+    scrollPositions: {},
+    tabStates: {}
+  },
+  
+  // Activité utilisateur
+  activity: {
+    lastActivity: null,
+    sessionStart: null,
+    isActive: true
   }
 };
 
 // ========================================
-// 🏪 SLICE UI
+// 🎛️ SLICE UI
 // ========================================
 
 const uiSlice = createSlice({
   name: 'ui',
   initialState,
   reducers: {
-    // === SIDEBAR ===
+    // ========================================
+    // 📱 SIDEBAR
+    // ========================================
+    
     toggleSidebar: (state) => {
       state.sidebar.isOpen = !state.sidebar.isOpen;
     },
@@ -143,41 +140,40 @@ const uiSlice = createSlice({
     
     setSidebarMobile: (state, action) => {
       state.sidebar.isMobile = action.payload;
-      // Sur mobile, fermer la sidebar par défaut
-      if (action.payload) {
-        state.sidebar.isOpen = false;
-      }
     },
     
     setActiveSection: (state, action) => {
       state.sidebar.activeSection = action.payload;
     },
     
-    // === THÈME ===
+    // ========================================
+    // 🎨 THÈME
+    // ========================================
+    
     setTheme: (state, action) => {
-      state.theme.mode = action.payload;
-      localStorage.setItem('zengest_admin_theme', action.payload);
+      state.theme = action.payload;
     },
     
     toggleTheme: (state) => {
-      const newTheme = state.theme.mode === 'light' ? 'dark' : 'light';
-      state.theme.mode = newTheme;
-      localStorage.setItem('zengest_admin_theme', newTheme);
+      state.theme = state.theme === 'light' ? 'dark' : 'light';
     },
     
     setPrimaryColor: (state, action) => {
-      state.theme.primaryColor = action.payload;
+      state.primaryColor = action.payload;
     },
     
     setFontSize: (state, action) => {
-      state.theme.fontSize = action.payload;
+      state.fontSize = action.payload;
     },
     
     setDensity: (state, action) => {
-      state.theme.density = action.payload;
+      state.density = action.payload;
     },
     
-    // === MODALES ===
+    // ========================================
+    // 🪟 MODALES
+    // ========================================
+    
     openModal: (state, action) => {
       const { modalId, data = null, options = {} } = action.payload;
       state.modals[modalId] = {
@@ -203,11 +199,14 @@ const uiSlice = createSlice({
     updateModalData: (state, action) => {
       const { modalId, data } = action.payload;
       if (state.modals[modalId]) {
-        state.modals[modalId].data = data;
+        state.modals[modalId].data = { ...state.modals[modalId].data, ...data };
       }
     },
     
-    // === NOTIFICATIONS ===
+    // ========================================
+    // 🔔 NOTIFICATIONS
+    // ========================================
+    
     addNotification: (state, action) => {
       const notification = {
         id: Date.now().toString(),
@@ -215,45 +214,41 @@ const uiSlice = createSlice({
         read: false,
         ...action.payload
       };
-      state.notifications.list.unshift(notification);
-      state.notifications.unreadCount += 1;
+      state.notifications.unshift(notification);
+      
+      // Limiter à 50 notifications
+      if (state.notifications.length > 50) {
+        state.notifications = state.notifications.slice(0, 50);
+      }
     },
     
     markNotificationAsRead: (state, action) => {
       const notificationId = action.payload;
-      const notification = state.notifications.list.find(n => n.id === notificationId);
-      if (notification && !notification.read) {
+      const notification = state.notifications.find(n => n.id === notificationId);
+      if (notification) {
         notification.read = true;
-        state.notifications.unreadCount = Math.max(0, state.notifications.unreadCount - 1);
       }
     },
     
     markAllNotificationsAsRead: (state) => {
-      state.notifications.list.forEach(notification => {
+      state.notifications.forEach(notification => {
         notification.read = true;
       });
-      state.notifications.unreadCount = 0;
-      state.notifications.lastChecked = new Date().toISOString();
     },
     
     removeNotification: (state, action) => {
       const notificationId = action.payload;
-      const index = state.notifications.list.findIndex(n => n.id === notificationId);
-      if (index !== -1) {
-        const notification = state.notifications.list[index];
-        if (!notification.read) {
-          state.notifications.unreadCount = Math.max(0, state.notifications.unreadCount - 1);
-        }
-        state.notifications.list.splice(index, 1);
-      }
+      state.notifications = state.notifications.filter(n => n.id !== notificationId);
     },
     
     clearAllNotifications: (state) => {
-      state.notifications.list = [];
-      state.notifications.unreadCount = 0;
+      state.notifications = [];
     },
     
-    // === CHARGEMENT ===
+    // ========================================
+    // ⏳ CHARGEMENT
+    // ========================================
+    
     setGlobalLoading: (state, action) => {
       state.loading.global = action.payload;
     },
@@ -267,13 +262,13 @@ const uiSlice = createSlice({
       state.loading.components[componentId] = loading;
     },
     
-    // === TABLES ===
+    // ========================================
+    // 📊 TABLES
+    // ========================================
+    
     setTableConfig: (state, action) => {
       const { tableId, config } = action.payload;
-      state.tables[tableId] = {
-        ...state.tables[tableId],
-        ...config
-      };
+      state.tables[tableId] = { ...state.tables[tableId], ...config };
     },
     
     updateTableSort: (state, action) => {
@@ -290,13 +285,13 @@ const uiSlice = createSlice({
       if (!state.tables[tableId]) {
         state.tables[tableId] = {};
       }
-      state.tables[tableId].filters = {
-        ...state.tables[tableId].filters,
-        ...filters
-      };
+      state.tables[tableId].filters = { ...state.tables[tableId].filters, ...filters };
     },
     
-    // === FILTRES GLOBAUX ===
+    // ========================================
+    // 🔍 FILTRES
+    // ========================================
+    
     setDateRange: (state, action) => {
       state.filters.dateRange = action.payload;
     },
@@ -310,14 +305,13 @@ const uiSlice = createSlice({
     },
     
     clearFilters: (state) => {
-      state.filters = {
-        dateRange: { start: null, end: null },
-        restaurant: null,
-        status: null
-      };
+      state.filters = initialState.filters;
     },
     
-    // === VUES ===
+    // ========================================
+    // 🎛️ VUES
+    // ========================================
+    
     setDashboardLayout: (state, action) => {
       state.views.dashboard.layout = action.payload;
     },
@@ -327,20 +321,20 @@ const uiSlice = createSlice({
     },
     
     setOrdersView: (state, action) => {
-      state.views.orders.view = action.payload;
+      state.views.orders = { ...state.views.orders, ...action.payload };
     },
     
     setReservationsView: (state, action) => {
-      state.views.reservations.view = action.payload;
+      state.views.reservations = { ...state.views.reservations, ...action.payload };
     },
     
-    // === FORMULAIRES ===
+    // ========================================
+    // 📝 FORMULAIRES
+    // ========================================
+    
     setFormState: (state, action) => {
       const { formId, formState } = action.payload;
-      state.forms[formId] = {
-        ...state.forms[formId],
-        ...formState
-      };
+      state.forms[formId] = { ...state.forms[formId], ...formState };
     },
     
     markFormAsDirty: (state, action) => {
@@ -358,7 +352,10 @@ const uiSlice = createSlice({
       }
     },
     
-    // === BREADCRUMB ===
+    // ========================================
+    // 🍞 BREADCRUMB
+    // ========================================
+    
     setBreadcrumb: (state, action) => {
       state.breadcrumb = action.payload;
     },
@@ -367,7 +364,10 @@ const uiSlice = createSlice({
       state.breadcrumb.push(action.payload);
     },
     
-    // === RECHERCHE GLOBALE ===
+    // ========================================
+    // 🔍 RECHERCHE
+    // ========================================
+    
     setSearchQuery: (state, action) => {
       state.search.query = action.payload;
     },
@@ -381,19 +381,17 @@ const uiSlice = createSlice({
     },
     
     setSearchLoading: (state, action) => {
-      state.search.isLoading = action.payload;
+      state.search.loading = action.payload;
     },
     
     clearSearch: (state) => {
-      state.search = {
-        query: '',
-        isActive: false,
-        results: [],
-        isLoading: false
-      };
+      state.search = initialState.search;
     },
     
-    // === PARAMÈTRES D'AFFICHAGE ===
+    // ========================================
+    // 🎮 AFFICHAGE
+    // ========================================
+    
     toggleHelpTips: (state) => {
       state.display.showHelpTips = !state.display.showHelpTips;
     },
@@ -414,65 +412,83 @@ const uiSlice = createSlice({
       state.display.compactMode = !state.display.compactMode;
     },
     
-    // === RESPONSIVE ===
+    // ========================================
+    // 📱 RESPONSIVE
+    // ========================================
+    
     setScreenSize: (state, action) => {
       const { width, height } = action.payload;
       state.responsive.isMobile = width < 768;
       state.responsive.isTablet = width >= 768 && width < 1024;
       state.responsive.isDesktop = width >= 1024;
-      
-      if (width < 768) {
-        state.responsive.screenSize = 'small';
-      } else if (width < 1024) {
-        state.responsive.screenSize = 'medium';
-      } else {
-        state.responsive.screenSize = 'large';
-      }
+      state.responsive.screenSize = width < 768 ? 'mobile' : width < 1024 ? 'tablet' : 'desktop';
+      state.responsive.orientation = width > height ? 'landscape' : 'portrait';
     },
     
-    // === CACHE ===
+    // ========================================
+    // 💾 CACHE
+    // ========================================
+    
     setLastRoute: (state, action) => {
       state.cache.lastRoute = action.payload;
     },
     
     setScrollPosition: (state, action) => {
-      const { route, scrollY } = action.payload;
-      state.cache.scrollPositions[route] = scrollY;
+      const { route, position } = action.payload;
+      state.cache.scrollPositions[route] = position;
     },
     
     setTabState: (state, action) => {
-      const { pageId, activeTabId } = action.payload;
-      state.cache.tabStates[pageId] = activeTabId;
+      const { tabId, tabState } = action.payload;
+      state.cache.tabStates[tabId] = tabState;
     },
     
-    // === RESET ===
+    // ========================================
+    // 👤 ACTIVITÉ UTILISATEUR
+    // ========================================
+    
+    updateLastActivity: (state) => {
+      state.activity.lastActivity = new Date().toISOString();
+      state.activity.isActive = true;
+    },
+    
+    setSessionStart: (state) => {
+      state.activity.sessionStart = new Date().toISOString();
+    },
+    
+    setUserInactive: (state) => {
+      state.activity.isActive = false;
+    },
+    
+    // ========================================
+    // 🔄 RESET
+    // ========================================
+    
     resetUI: (state) => {
-      // Garder seulement le thème et les préférences
-      const { theme, display } = state;
-      Object.assign(state, initialState, { theme, display });
+      // Garder certains états lors du reset
+      const { theme, primaryColor, fontSize, density } = state;
+      Object.assign(state, initialState);
+      state.theme = theme;
+      state.primaryColor = primaryColor;
+      state.fontSize = fontSize;
+      state.density = density;
     }
-  }
+  },
 });
 
 // ========================================
 // 🎯 SÉLECTEURS
 // ========================================
 
-export const selectUI = (state) => state.ui;
 export const selectSidebar = (state) => state.ui.sidebar;
 export const selectTheme = (state) => state.ui.theme;
-export const selectModals = (state) => state.ui.modals;
 export const selectNotifications = (state) => state.ui.notifications;
 export const selectLoading = (state) => state.ui.loading;
-export const selectTables = (state) => state.ui.tables;
-export const selectFilters = (state) => state.ui.filters;
-export const selectViews = (state) => state.ui.views;
-export const selectForms = (state) => state.ui.forms;
-export const selectBreadcrumb = (state) => state.ui.breadcrumb;
 export const selectSearch = (state) => state.ui.search;
 export const selectDisplay = (state) => state.ui.display;
 export const selectResponsive = (state) => state.ui.responsive;
 export const selectCache = (state) => state.ui.cache;
+export const selectActivity = (state) => state.ui.activity;
 
 // Sélecteur pour une modale spécifique
 export const selectModal = (modalId) => (state) => {
@@ -579,6 +595,11 @@ export const {
   setLastRoute,
   setScrollPosition,
   setTabState,
+  
+  // Activité
+  updateLastActivity,
+  setSessionStart,
+  setUserInactive,
   
   // Reset
   resetUI

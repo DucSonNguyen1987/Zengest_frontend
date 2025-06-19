@@ -1,4 +1,4 @@
-// Header de l'interface admin
+// web-admin/src/components/layout/Header/Header.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -27,7 +27,7 @@ import {
   markAllNotificationsAsRead,
   openModal
 } from '@/store/slices/uiSlice';
-import { logoutUser } from '@/store/slices/authSlice';
+import { logout } from '@/store/slices/authSlice'; // ✅ Corriger l'import
 
 // Sélecteurs
 import {
@@ -73,66 +73,34 @@ const Header = () => {
   const responsive = useSelector(selectResponsive);
   
   // États locaux
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isSearchActive, setIsSearchActive] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [localSearchQuery, setLocalSearchQuery] = useState(search.query);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
   
   // Refs
-  const userMenuRef = useRef(null);
-  const notificationsRef = useRef(null);
   const searchRef = useRef(null);
+  const userMenuRef = useRef(null);
+  const notificationMenuRef = useRef(null);
   
   // Hooks personnalisés
-  const debouncedSearchQuery = useDebounce(localSearchQuery, 300);
+  const debouncedSearchQuery = useDebounce(search.query, 300);
   
+  // Fermeture des menus au clic extérieur
   useClickOutside(userMenuRef, () => setIsUserMenuOpen(false));
-  useClickOutside(notificationsRef, () => setIsNotificationsOpen(false));
-  useClickOutside(searchRef, () => {
-    setIsSearchFocused(false);
-    if (!search.query) {
-      dispatch(setSearchActive(false));
-    }
-  });
+  useClickOutside(notificationMenuRef, () => setIsNotificationMenuOpen(false));
   
   // ========================================
   // 🔄 EFFETS
   // ========================================
   
-  // Mise à jour de la recherche avec debounce
+  // Recherche avec debounce
   useEffect(() => {
-    if (debouncedSearchQuery !== search.query) {
-      dispatch(setSearchQuery(debouncedSearchQuery));
-      if (debouncedSearchQuery) {
-        dispatch(setSearchActive(true));
-      }
+    if (debouncedSearchQuery) {
+      // Effectuer la recherche
+      console.log('Recherche:', debouncedSearchQuery);
     }
-  }, [debouncedSearchQuery, dispatch, search.query]);
-  
-  // Raccourcis clavier
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      // Ctrl/Cmd + K pour la recherche
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        searchRef.current?.focus();
-        setIsSearchFocused(true);
-        dispatch(setSearchActive(true));
-      }
-      
-      // Escape pour fermer la recherche
-      if (e.key === 'Escape' && isSearchFocused) {
-        searchRef.current?.blur();
-        setIsSearchFocused(false);
-        setLocalSearchQuery('');
-        dispatch(setSearchQuery(''));
-        dispatch(setSearchActive(false));
-      }
-    };
-    
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [dispatch, isSearchFocused]);
+  }, [debouncedSearchQuery]);
   
   // ========================================
   // 🎯 GESTIONNAIRES D'ÉVÉNEMENTS
@@ -146,25 +114,30 @@ const Header = () => {
     dispatch(toggleTheme());
   };
   
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    dispatch(setSearchQuery(query));
+    setIsSearchActive(query.length > 0);
+  };
+  
   const handleSearchFocus = () => {
     setIsSearchFocused(true);
     dispatch(setSearchActive(true));
   };
   
-  const handleSearchChange = (e) => {
-    setLocalSearchQuery(e.target.value);
+  const handleSearchBlur = () => {
+    setIsSearchFocused(false);
+    setTimeout(() => {
+      if (!search.query) {
+        setIsSearchActive(false);
+        dispatch(setSearchActive(false));
+      }
+    }, 200);
   };
   
-  const handleSearchClear = () => {
-    setLocalSearchQuery('');
-    dispatch(setSearchQuery(''));
-    dispatch(setSearchActive(false));
-    searchRef.current?.focus();
-  };
-  
-  const handleNotificationsToggle = () => {
-    setIsNotificationsOpen(!isNotificationsOpen);
-    if (!isNotificationsOpen && notifications.unreadCount > 0) {
+  const handleNotificationToggle = () => {
+    setIsNotificationMenuOpen(!isNotificationMenuOpen);
+    if (!isNotificationMenuOpen) {
       dispatch(markAllNotificationsAsRead());
     }
   };
@@ -175,7 +148,7 @@ const Header = () => {
   
   const handleLogout = async () => {
     try {
-      await dispatch(logoutUser()).unwrap();
+      await dispatch(logout()).unwrap(); // ✅ Utiliser logout au lieu de logoutUser
       navigate('/login');
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error);
@@ -199,7 +172,7 @@ const Header = () => {
   const getHeaderClasses = () => {
     const classes = ['admin-header'];
     
-    if (sidebar.isOpen && !responsive.isMobile) {
+    if (sidebar.isVisible && !responsive.isMobile) {
       classes.push('sidebar-open');
     }
     
@@ -231,9 +204,13 @@ const Header = () => {
   };
   
   const getUserInitials = () => {
-    if (!currentUser) return 'ZA';
-    const { firstName, lastName } = currentUser;
-    return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || 'ZA';
+    if (!currentUser?.name) return 'ZA';
+    const nameParts = currentUser.name.split(' ');
+    return nameParts.map(part => part.charAt(0)).join('').toUpperCase().slice(0, 2) || 'ZA';
+  };
+  
+  const getUnreadNotificationsCount = () => {
+    return notifications.filter(n => !n.read).length;
   };
   
   // ========================================
@@ -258,59 +235,44 @@ const Header = () => {
             aria-label="Toggle sidebar"
           >
             {responsive.isMobile ? (
-              sidebar.isOpen ? <XMarkIcon className="icon" /> : <Bars3Icon className="icon" />
+              sidebar.isVisible ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />
             ) : (
-              <Bars3Icon className="icon" />
+              <Bars3Icon className="h-6 w-6" />
             )}
           </motion.button>
           
-          {/* Logo et titre */}
-          <div className="header-brand">
-            <img 
-              src="/assets/logos/zengest-admin.svg" 
-              alt="Zengest Admin" 
-              className="header-logo"
-            />
-            {!responsive.isMobile && (
-              <div className="header-title">
-                <h1>{getPageTitle()}</h1>
-              </div>
-            )}
+          {/* Titre de la page */}
+          <div className="header-title">
+            <h1>{getPageTitle()}</h1>
           </div>
         </div>
         
         {/* Section centrale - Recherche */}
         <div className="header-center">
-          <div className="search-container" ref={searchRef}>
-            <div className="search-input-wrapper">
-              <MagnifyingGlassIcon className="search-icon" />
-              <input
-                ref={searchRef}
-                type="text"
-                placeholder="Rechercher... (Ctrl+K)"
-                value={localSearchQuery}
-                onChange={handleSearchChange}
-                onFocus={handleSearchFocus}
-                className="search-input"
-              />
-              {localSearchQuery && (
-                <motion.button
-                  className="search-clear"
-                  onClick={handleSearchClear}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <XMarkIcon className="icon" />
-                </motion.button>
-              )}
-            </div>
+          <div className={`header-search ${isSearchActive ? 'is-active' : ''}`} ref={searchRef}>
+            <MagnifyingGlassIcon className="header-search-icon" />
+            <input
+              type="text"
+              placeholder="Rechercher..."
+              value={search.query || ''}
+              onChange={handleSearchChange}
+              onFocus={handleSearchFocus}
+              onBlur={handleSearchBlur}
+              className="header-search-input"
+            />
             
             {/* Résultats de recherche */}
             <AnimatePresence>
-              {isSearchFocused && search.isActive && (
-                <SearchResults />
+              {isSearchActive && search.query && (
+                <motion.div
+                  className="header-search-results"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <SearchResults query={search.query} />
+                </motion.div>
               )}
             </AnimatePresence>
           </div>
@@ -320,88 +282,127 @@ const Header = () => {
         <div className="header-right">
           {/* Bouton thème */}
           <motion.button
-            className="header-action-button theme-toggle"
+            className="header-action-button"
             onClick={handleThemeToggle}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            title={`Passer en mode ${theme.mode === 'light' ? 'sombre' : 'clair'}`}
+            title={theme.current === 'light' ? 'Mode sombre' : 'Mode clair'}
           >
-            {theme.mode === 'light' ? (
-              <MoonIcon className="icon" />
+            {theme.current === 'light' ? (
+              <MoonIcon className="h-5 w-5" />
             ) : (
-              <SunIcon className="icon" />
+              <SunIcon className="h-5 w-5" />
             )}
           </motion.button>
           
           {/* Notifications */}
-          <div className="notifications-container" ref={notificationsRef}>
+          <div className="header-notifications" ref={notificationMenuRef}>
             <motion.button
-              className="header-action-button notifications-button"
-              onClick={handleNotificationsToggle}
+              className="header-action-button"
+              onClick={handleNotificationToggle}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              title="Notifications"
+              aria-label="Notifications"
             >
-              <BellIcon className="icon" />
-              {notifications.unreadCount > 0 && (
-                <motion.span
-                  className="notification-badge"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
-                >
-                  {notifications.unreadCount > 99 ? '99+' : notifications.unreadCount}
-                </motion.span>
+              <BellIcon className="h-5 w-5" />
+              {getUnreadNotificationsCount() > 0 && (
+                <span className="notification-badge">
+                  {getUnreadNotificationsCount()}
+                </span>
               )}
             </motion.button>
             
+            {/* Menu des notifications */}
             <AnimatePresence>
-              {isNotificationsOpen && (
-                <NotificationDropdown
-                  notifications={notifications.list}
-                  onClose={() => setIsNotificationsOpen(false)}
-                />
+              {isNotificationMenuOpen && (
+                <motion.div
+                  className="header-dropdown notification-dropdown"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="dropdown-header">
+                    <h3>Notifications</h3>
+                  </div>
+                  <div className="dropdown-content">
+                    {notifications.length > 0 ? (
+                      notifications.slice(0, 5).map((notification) => (
+                        <div
+                          key={notification.id}
+                          className={`notification-item ${!notification.read ? 'unread' : ''}`}
+                        >
+                          <div className="notification-content">
+                            <p className="notification-title">{notification.title}</p>
+                            <p className="notification-message">{notification.message}</p>
+                            <span className="notification-time">{notification.time}</span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="no-notifications">
+                        <p>Aucune notification</p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="dropdown-footer">
+                    <button className="view-all-button">
+                      Voir toutes les notifications
+                    </button>
+                  </div>
+                </motion.div>
               )}
             </AnimatePresence>
           </div>
           
           {/* Menu utilisateur */}
-          <div className="user-menu-container" ref={userMenuRef}>
+          <div className="header-user" ref={userMenuRef}>
             <motion.button
-              className="user-menu-button"
+              className="header-user-button"
               onClick={handleUserMenuToggle}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               <div className="user-avatar">
                 {currentUser?.avatar ? (
-                  <img src={currentUser.avatar} alt={currentUser.firstName} />
+                  <img src={currentUser.avatar} alt={currentUser.name} />
                 ) : (
                   <span className="user-initials">{getUserInitials()}</span>
                 )}
               </div>
-              {!responsive.isMobile && (
-                <>
-                  <div className="user-info">
-                    <span className="user-name">
-                      {currentUser?.firstName} {currentUser?.lastName}
-                    </span>
-                    <span className="user-role">{currentUser?.role}</span>
-                  </div>
-                  <ChevronDownIcon className="chevron-icon" />
-                </>
-              )}
+              <div className="user-info">
+                <span className="user-name">{currentUser?.name || 'Utilisateur'}</span>
+                <span className="user-role">{currentUser?.role || 'Employé'}</span>
+              </div>
+              <ChevronDownIcon className="h-4 w-4" />
             </motion.button>
             
+            {/* Menu déroulant utilisateur */}
             <AnimatePresence>
               {isUserMenuOpen && (
-                <UserDropdown
-                  user={currentUser}
-                  onProfile={handleProfileClick}
-                  onSettings={handleSettingsClick}
-                  onLogout={handleLogout}
-                  onClose={() => setIsUserMenuOpen(false)}
-                />
+                <motion.div
+                  className="header-dropdown user-dropdown"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="dropdown-content">
+                    <button onClick={handleProfileClick} className="dropdown-item">
+                      <UserIcon className="h-4 w-4" />
+                      <span>Mon profil</span>
+                    </button>
+                    <button onClick={handleSettingsClick} className="dropdown-item">
+                      <Cog6ToothIcon className="h-4 w-4" />
+                      <span>Paramètres</span>
+                    </button>
+                    <div className="dropdown-divider" />
+                    <button onClick={handleLogout} className="dropdown-item danger">
+                      <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                      <span>Déconnexion</span>
+                    </button>
+                  </div>
+                </motion.div>
               )}
             </AnimatePresence>
           </div>

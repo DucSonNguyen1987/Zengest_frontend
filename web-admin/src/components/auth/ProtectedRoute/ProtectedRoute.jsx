@@ -17,11 +17,12 @@ import {
   selectIsAuthenticated,
   selectIsInitialized,
   selectCurrentUser,
-  selectIsLoading
+  selectAuthLoading
 } from '@/store/slices/authSlice';
 
 // Composants
-//import PageLoader from '@/components/common/Loading/PageLoader';
+import LoadingSpinner, { PageLoader } from '@/components/common/Loading/LoadingSpinner';
+
 
 // ========================================
 // 🛡️ COMPOSANT ROUTE PROTÉGÉE
@@ -35,7 +36,7 @@ const ProtectedRoute = ({ children, fallback = null }) => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const isInitialized = useSelector(selectIsInitialized);
   const currentUser = useSelector(selectCurrentUser);
-  const isLoading = useSelector(selectIsLoading);
+  const isLoading = useSelector(selectAuthLoading);
   
   // État local
   const [verificationAttempted, setVerificationAttempted] = useState(false);

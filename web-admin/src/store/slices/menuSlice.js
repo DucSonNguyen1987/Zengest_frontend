@@ -1,6 +1,4 @@
-// web-admin/src/store/slices/menuSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { menuService } from '@/services/api/menu';
 
 // ========================================
 // 🔄 THUNKS ASYNC (Actions asynchrones)
@@ -13,8 +11,46 @@ export const fetchMenuItems = createAsyncThunk(
   'menu/fetchMenuItems',
   async (params = {}, { rejectWithValue }) => {
     try {
-      const response = await menuService.getMenuItems(params);
-      return response;
+      // Simulation API - remplacer par vraie API plus tard
+      console.log('🍽️ Récupération items menu avec params:', params);
+      
+      // Données de test
+      const mockData = {
+        success: true,
+        data: {
+          items: [
+            {
+              _id: '1',
+              name: 'Burger Classic',
+              description: 'Burger avec steak, salade, tomate',
+              category: { _id: 'cat1', name: 'Burgers' },
+              price: 12.50,
+              featured: true,
+              availability: { isAvailable: true }
+            },
+            {
+              _id: '2', 
+              name: 'Pizza Margherita',
+              description: 'Pizza traditionnelle italienne',
+              category: { _id: 'cat2', name: 'Pizzas' },
+              price: 14.00,
+              featured: false,
+              availability: { isAvailable: true }
+            }
+          ],
+          pagination: {
+            currentPage: 1,
+            totalPages: 1,
+            totalItems: 2,
+            itemsPerPage: 20
+          }
+        }
+      };
+      
+      // Simuler délai réseau
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      return mockData;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -28,8 +64,21 @@ export const fetchMenuItemById = createAsyncThunk(
   'menu/fetchMenuItemById',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await menuService.getMenuItemById(id);
-      return response;
+      console.log('🍽️ Récupération item menu:', id);
+      
+      // Données de test
+      const mockData = {
+        success: true,
+        data: {
+          _id: id,
+          name: 'Item de test',
+          description: 'Description de test',
+          price: 10.00
+        }
+      };
+      
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return mockData;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -43,8 +92,19 @@ export const createMenuItem = createAsyncThunk(
   'menu/createMenuItem',
   async (itemData, { rejectWithValue }) => {
     try {
-      const response = await menuService.createMenuItem(itemData);
-      return response;
+      console.log('🍽️ Création item menu:', itemData);
+      
+      const mockData = {
+        success: true,
+        data: {
+          _id: Date.now().toString(),
+          ...itemData,
+          createdAt: new Date().toISOString()
+        }
+      };
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return mockData;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -58,8 +118,19 @@ export const updateMenuItem = createAsyncThunk(
   'menu/updateMenuItem',
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      const response = await menuService.updateMenuItem(id, data);
-      return response;
+      console.log('🍽️ Mise à jour item menu:', id, data);
+      
+      const mockData = {
+        success: true,
+        data: {
+          _id: id,
+          ...data,
+          updatedAt: new Date().toISOString()
+        }
+      };
+      
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return mockData;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -73,8 +144,10 @@ export const deleteMenuItem = createAsyncThunk(
   'menu/deleteMenuItem',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await menuService.deleteMenuItem(id);
-      return { id, ...response };
+      console.log('🍽️ Suppression item menu:', id);
+      
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return { success: true, id };
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -88,8 +161,19 @@ export const toggleMenuItemAvailability = createAsyncThunk(
   'menu/toggleMenuItemAvailability',
   async ({ id, isAvailable }, { rejectWithValue }) => {
     try {
-      const response = await menuService.toggleMenuItemAvailability(id, isAvailable);
-      return response;
+      console.log('🍽️ Toggle disponibilité:', id, isAvailable);
+      
+      const mockData = {
+        success: true,
+        data: {
+          _id: id,
+          availability: { isAvailable },
+          updatedAt: new Date().toISOString()
+        }
+      };
+      
+      await new Promise(resolve => setTimeout(resolve, 200));
+      return mockData;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -97,14 +181,26 @@ export const toggleMenuItemAvailability = createAsyncThunk(
 );
 
 /**
- * Récupérer les catégories de menu
+ * Récupérer les catégories
  */
 export const fetchMenuCategories = createAsyncThunk(
   'menu/fetchMenuCategories',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await menuService.getCategories();
-      return response;
+      console.log('🗂️ Récupération catégories menu');
+      
+      const mockData = {
+        success: true,
+        data: [
+          { _id: 'cat1', name: 'Burgers', description: 'Burgers et sandwichs' },
+          { _id: 'cat2', name: 'Pizzas', description: 'Pizzas traditionnelles et originales' },
+          { _id: 'cat3', name: 'Salades', description: 'Salades fraîches et variées' },
+          { _id: 'cat4', name: 'Desserts', description: 'Desserts maison' }
+        ]
+      };
+      
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return mockData;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -118,8 +214,19 @@ export const createMenuCategory = createAsyncThunk(
   'menu/createMenuCategory',
   async (categoryData, { rejectWithValue }) => {
     try {
-      const response = await menuService.createCategory(categoryData);
-      return response;
+      console.log('🗂️ Création catégorie:', categoryData);
+      
+      const mockData = {
+        success: true,
+        data: {
+          _id: Date.now().toString(),
+          ...categoryData,
+          createdAt: new Date().toISOString()
+        }
+      };
+      
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return mockData;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -133,8 +240,19 @@ export const updateMenuCategory = createAsyncThunk(
   'menu/updateMenuCategory',
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      const response = await menuService.updateCategory(id, data);
-      return response;
+      console.log('🗂️ Mise à jour catégorie:', id, data);
+      
+      const mockData = {
+        success: true,
+        data: {
+          _id: id,
+          ...data,
+          updatedAt: new Date().toISOString()
+        }
+      };
+      
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return mockData;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -148,8 +266,10 @@ export const deleteMenuCategory = createAsyncThunk(
   'menu/deleteMenuCategory',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await menuService.deleteCategory(id);
-      return { id, ...response };
+      console.log('🗂️ Suppression catégorie:', id);
+      
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return { success: true, id };
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -163,8 +283,24 @@ export const fetchDailySpecials = createAsyncThunk(
   'menu/fetchDailySpecials',
   async (params = {}, { rejectWithValue }) => {
     try {
-      const response = await menuService.getDailySpecials(params);
-      return response;
+      console.log('⭐ Récupération plats du jour:', params);
+      
+      const mockData = {
+        success: true,
+        data: [
+          {
+            _id: 'special1',
+            name: 'Plat du jour - Coq au vin',
+            description: 'Coq au vin traditionnel avec légumes de saison',
+            price: 18.50,
+            status: 'active',
+            date: new Date().toISOString().split('T')[0]
+          }
+        ]
+      };
+      
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return mockData;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -172,14 +308,26 @@ export const fetchDailySpecials = createAsyncThunk(
 );
 
 /**
- * Créer un nouveau plat du jour
+ * Créer un plat du jour
  */
 export const createDailySpecial = createAsyncThunk(
   'menu/createDailySpecial',
   async (specialData, { rejectWithValue }) => {
     try {
-      const response = await menuService.createDailySpecial(specialData);
-      return response;
+      console.log('⭐ Création plat du jour:', specialData);
+      
+      const mockData = {
+        success: true,
+        data: {
+          _id: Date.now().toString(),
+          ...specialData,
+          status: 'pending',
+          createdAt: new Date().toISOString()
+        }
+      };
+      
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return mockData;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -193,8 +341,19 @@ export const approveDailySpecial = createAsyncThunk(
   'menu/approveDailySpecial',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await menuService.approveDailySpecial(id);
-      return response;
+      console.log('✅ Approbation plat du jour:', id);
+      
+      const mockData = {
+        success: true,
+        data: {
+          _id: id,
+          status: 'active',
+          approvedAt: new Date().toISOString()
+        }
+      };
+      
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return mockData;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -208,8 +367,10 @@ export const rejectDailySpecial = createAsyncThunk(
   'menu/rejectDailySpecial',
   async ({ id, reason }, { rejectWithValue }) => {
     try {
-      const response = await menuService.rejectDailySpecial(id, reason);
-      return { id, ...response };
+      console.log('❌ Rejet plat du jour:', id, reason);
+      
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return { success: true, id };
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -426,7 +587,7 @@ const menuSlice = createSlice({
         if (updatedItem) {
           const index = state.items.findIndex(item => item._id === updatedItem._id);
           if (index !== -1) {
-            state.items[index] = updatedItem;
+            state.items[index] = { ...state.items[index], ...updatedItem };
           }
         }
       });
@@ -478,7 +639,7 @@ const menuSlice = createSlice({
       });
     
     // ========================================
-    // 🔥 PLATS DU JOUR
+    // ⭐ PLATS DU JOUR
     // ========================================
     
     // Fetch daily specials
@@ -500,7 +661,7 @@ const menuSlice = createSlice({
     builder
       .addCase(createDailySpecial.fulfilled, (state, action) => {
         if (action.payload.data) {
-          state.dailySpecials.unshift(action.payload.data);
+          state.dailySpecials.push(action.payload.data);
         }
       });
     
@@ -511,7 +672,7 @@ const menuSlice = createSlice({
         if (updatedSpecial) {
           const index = state.dailySpecials.findIndex(special => special._id === updatedSpecial._id);
           if (index !== -1) {
-            state.dailySpecials[index] = updatedSpecial;
+            state.dailySpecials[index] = { ...state.dailySpecials[index], ...updatedSpecial };
           }
         }
       });

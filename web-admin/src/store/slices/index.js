@@ -1,33 +1,95 @@
+// web-admin/src/store/slices/index.js
 // Export centralisé de tous les slices et leurs actions/sélecteurs
 
 // Auth
 export {
   default as authReducer,
-  loginUser,
-  logoutUser,
+  login as loginUser,
+  logout as logoutUser,
   verifyToken,
   updateProfile,
+  setInitialized,
+  restoreSession,
+  clearError,
+  updateUser,
   selectCurrentUser,
   selectIsAuthenticated,
   selectAuthLoading,
   selectAuthError,
-  selectIsInitialized
+  selectIsInitialized,
+  selectUserRole,
+  selectUserPermissions,
+  selectIsAdmin,
+  selectIsOwner,
+  selectIsManager,
+  selectIsStaff
 } from './authSlice';
 
 // UI
 export {
   default as uiReducer,
+  // Sidebar
   toggleSidebar,
+  closeSidebar,
+  openSidebar,
+  collapseSidebar,
+  setSidebarMobile,
+  setActiveSection,
+  // Thème
   setTheme,
-  showNotification,
-  hideNotification,
-  setLoading,
-  clearLoading,
+  toggleTheme,
+  setPrimaryColor,
+  setFontSize,
+  setDensity,
+  // Notifications
+  addNotification as showNotification,
+  removeNotification as hideNotification,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+  clearAllNotifications,
+  // Chargement
+  setGlobalLoading as setLoading,
+  setPageLoading,
+  setComponentLoading,
+  // Modales
+  openModal,
+  closeModal,
+  closeAllModals,
+  updateModalData,
+  // Recherche
+  setSearchQuery,
+  setSearchActive,
+  setSearchResults,
+  setSearchLoading,
+  clearSearch,
+  // Responsive
+  setScreenSize,
+  // Cache et activité
+  setLastRoute,
+  updateLastActivity,
+  setUserActivity,
+  setScrollPosition,
+  setTabState,
+  // Autres
+  setBreadcrumb,
+  addToBreadcrumb,
+  clearFilters,
+  resetUI,
+  // Sélecteurs
   selectSidebar,
   selectTheme,
   selectNotifications,
   selectLoading,
-  selectResponsive
+  selectResponsive,
+  selectModals,
+  selectSearch,
+  selectBreadcrumb,
+  selectCache,
+  selectDisplay,
+  selectViews,
+  selectFilters,
+  selectTables,
+  selectForms
 } from './uiSlice';
 
 // Menu

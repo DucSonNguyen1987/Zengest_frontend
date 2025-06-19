@@ -1,7 +1,11 @@
 import axios from 'axios';
 
-// Configuration de base
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+// Configuration de base - IMPORTANT: pointer vers le port 3000 (backend)
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+                    import.meta.env.VITE_API_BASE_URL || 
+                    'http://localhost:3000/api';
+
+console.log('🌐 Configuration API URL:', API_BASE_URL);
 
 // Créer l'instance Axios
 const apiClient = axios.create({
@@ -25,7 +29,7 @@ apiClient.interceptors.request.use(
     
     // Log des requêtes en développement
     if (import.meta.env.MODE === 'development') {
-      console.log(`🌐 ${config.method?.toUpperCase()} ${config.url}`, config.data || config.params);
+      console.log(`🌐 ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`, config.data || config.params);
     }
     
     return config;
@@ -57,12 +61,16 @@ apiClient.interceptors.response.use(
       // Gestion des erreurs spécifiques
       switch (status) {
         case 401:
+          console.warn('🔒 Token expiré ou invalide - nettoyage...');
           // Token expiré ou invalide - redirection vers login
           localStorage.removeItem('zengest_admin_token');
+          localStorage.removeItem('zengest_admin_user');
           sessionStorage.removeItem('zengest_admin_token');
+          sessionStorage.removeItem('zengest_admin_user');
           
           // Éviter la redirection infinie sur la page de login
           if (!window.location.pathname.includes('/login')) {
+            console.log('🔄 Redirection vers login...');
             window.location.href = '/login';
           }
           break;
@@ -93,9 +101,10 @@ apiClient.interceptors.response.use(
       formattedError.data = data;
       throw formattedError;
     } else if (error.request) {
-      // Erreur réseau
-      console.error('🌐 Erreur réseau - Serveur indisponible');
-      throw new Error('Impossible de contacter le serveur. Vérifiez votre connexion.');
+      // Erreur réseau - serveur non disponible
+      console.error('🌐 Erreur réseau - Serveur indisponible à:', API_BASE_URL);
+      console.error('💡 Vérifiez que le backend tourne sur le port 3000');
+      throw new Error('Impossible de contacter le serveur. Vérifiez que le backend est démarré sur le port 3000.');
     } else {
       // Autre erreur
       console.error('❌ Erreur inattendue:', error.message);

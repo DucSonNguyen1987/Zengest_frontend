@@ -5,8 +5,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ChevronDownIcon, 
   ChevronRightIcon,
-  CircleIcon 
+  MinusIcon // Remplace CircleIcon par MinusIcon ou utilise un élément CSS
 } from '@heroicons/react/24/outline';
+
+// Alternative 1: Utiliser MinusIcon
+// Alternative 2: Créer un composant bullet personnalisé
+const BulletIcon = ({ className }) => (
+  <span className={`inline-block rounded-full bg-current ${className}`} />
+);
 
 // ========================================
 // 📂 COMPOSANT SECTION SIDEBAR
@@ -157,10 +163,17 @@ const SidebarSection = ({
               <li key={subItem.id}>
                 <Link
                   to={subItem.path}
-                  className={`sidebar-subitem ${location.pathname === subItem.path ? 'is-active' : ''}`}
+                  className={`sidebar-subitem ${location.pathname === subItem.path ? 
+                    'is-active' : ''}`}
                   onClick={() => handleItemClick(subItem)}
                 >
-                  <CircleIcon className="h-2 w-2 sidebar-subitem__bullet" />
+                  {/* Option 1: Utiliser BulletIcon personnalisé */}
+                  <BulletIcon className="h-2 w-2 sidebar-subitem__bullet" />
+                  
+                  {/* Option 2: Utiliser MinusIcon (décommentez cette ligne et commentez la précédente)
+                  <MinusIcon className="h-2 w-2 sidebar-subitem__bullet" />
+                  */}
+                  
                   <span>{subItem.label}</span>
                 </Link>
               </li>
@@ -217,7 +230,7 @@ const SidebarSection = ({
             initial={!isCollapsed ? { opacity: 0, height: 0 } : false}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            transition={{ duration: 0.3 }}
           >
             {visibleItems.map((item, index) => renderSimpleItem(item, index))}
           </motion.ul>
@@ -228,121 +241,3 @@ const SidebarSection = ({
 };
 
 export default SidebarSection;
-
-// ========================================
-// 🎨 STYLES À AJOUTER DANS LE CSS
-// ========================================
-
-/*
-Ajoutez ces styles dans votre fichier CSS principal :
-
-.sidebar-section {
-  margin-bottom: 1.5rem;
-}
-
-.sidebar-section__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 0.75rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-
-.sidebar-section__header.is-clickable:hover {
-  background-color: #f5f5f5;
-}
-
-.sidebar-section__title {
-  margin-bottom: 0 !important;
-  font-size: 0.75rem !important;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 700;
-  color: #7a7a7a;
-}
-
-.sidebar-section__toggle {
-  display: flex;
-  align-items: center;
-  color: #a5a5a5;
-}
-
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem;
-  border-radius: 6px;
-  color: #4a4a4a;
-  text-decoration: none;
-  transition: all 0.15s ease;
-  margin-bottom: 0.25rem;
-}
-
-.sidebar-item:hover {
-  background-color: #f8f9fa;
-  color: #eb2f06;
-  transform: translateX(2px);
-}
-
-.sidebar-item.is-active {
-  background-color: #eb2f06;
-  color: white;
-  box-shadow: 0 2px 8px rgba(235, 47, 6, 0.25);
-}
-
-.sidebar-item.is-disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.sidebar-item__icon {
-  margin-right: 0.75rem;
-  display: flex;
-  align-items: center;
-  min-width: 20px;
-}
-
-.sidebar-item__label {
-  flex: 1;
-  font-weight: 500;
-}
-
-.sidebar-item__arrow {
-  margin-left: auto;
-  color: inherit;
-}
-
-.sidebar-subitems {
-  margin-left: 2.5rem;
-  margin-top: 0.5rem;
-}
-
-.sidebar-subitem {
-  display: flex;
-  align-items: center;
-  padding: 0.5rem;
-  border-radius: 4px;
-  color: #7a7a7a;
-  text-decoration: none;
-  font-size: 0.875rem;
-  transition: all 0.15s ease;
-  margin-bottom: 0.125rem;
-}
-
-.sidebar-subitem:hover {
-  background-color: #f5f5f5;
-  color: #4a4a4a;
-}
-
-.sidebar-subitem.is-active {
-  color: #eb2f06;
-  font-weight: 600;
-}
-
-.sidebar-subitem__bullet {
-  margin-right: 0.5rem;
-  opacity: 0.5;
-}
-*/

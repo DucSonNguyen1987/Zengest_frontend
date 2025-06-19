@@ -1,4 +1,4 @@
-// Sidebar de navigation
+// web-admin/src/components/layout/Sidebar/Sidebar.jsx
 import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { NavLink, useLocation } from 'react-router-dom';
@@ -33,13 +33,14 @@ import {
 } from '@/store/slices/uiSlice';
 import {
   selectCurrentUser,
-  selectHasPermission,
-  selectUserRole
+  selectUserRole // Remplacer selectHasPermission par selectUserRole
 } from '@/store/slices/authSlice';
+
+// Hooks
+import { usePermissions } from '@/hooks/auth/usePermissions';
 
 // Composants
 import SidebarSection from './SidebarSection';
-//import SidebarItem from './SidebarItem';
 
 // Styles
 //import './Sidebar.scss';
@@ -97,9 +98,9 @@ const NAVIGATION_CONFIG = [
             path: '/menu/categories'
           },
           {
-            id: 'daily-specials',
+            id: 'menu-specials',
             label: 'Plats du jour',
-            path: '/menu/daily-specials'
+            path: '/menu/specials'
           }
         ]
       }
@@ -116,16 +117,8 @@ const NAVIGATION_CONFIG = [
         icon: ShoppingBagIcon,
         path: '/orders',
         permissions: ['manage_orders', 'view_orders'],
-        description: 'Suivi des commandes en temps réel',
+        description: 'Gestion des commandes',
         badge: 'live'
-      },
-      {
-        id: 'reservations',
-        label: 'Réservations',
-        icon: CalendarDaysIcon,
-        path: '/reservations',
-        permissions: ['manage_reservations'],
-        description: 'Gestion des réservations'
       },
       {
         id: 'tables',
@@ -134,6 +127,15 @@ const NAVIGATION_CONFIG = [
         path: '/tables',
         permissions: ['manage_tables'],
         description: 'Plan de salle et gestion des tables'
+      },
+      {
+        id: 'reservations',
+        label: 'Réservations',
+        icon: CalendarDaysIcon,
+        path: '/reservations',
+        permissions: ['manage_reservations'],
+        description: 'Gestion des réservations',
+        badge: 'new'
       }
     ]
   },
@@ -143,54 +145,61 @@ const NAVIGATION_CONFIG = [
     type: 'section',
     items: [
       {
-        id: 'analytics-dashboard',
-        label: 'Vue d\'ensemble',
+        id: 'reports',
+        label: 'Rapports',
+        icon: PresentationChartLineIcon,
+        path: '/reports',
+        permissions: ['view_analytics'],
+        description: 'Rapports et statistiques'
+      },
+      {
+        id: 'analytics',
+        label: 'Analytiques',
         icon: ChartBarIcon,
         path: '/analytics',
         permissions: ['view_analytics'],
-        description: 'Tableaux de bord et métriques'
-      },
-      {
-        id: 'reports',
-        label: 'Rapports',
-        icon: ClipboardDocumentListIcon,
-        path: '/analytics/reports',
-        permissions: ['view_analytics'],
-        description: 'Rapports détaillés'
+        description: 'Analyses avancées'
       }
     ]
   },
   {
-    id: 'configuration',
-    label: 'Configuration',
+    id: 'staff',
+    label: 'Personnel',
     type: 'section',
     items: [
       {
-        id: 'settings',
-        label: 'Paramètres',
-        icon: Cog6ToothIcon,
-        path: '/settings',
-        permissions: ['manage_settings'],
-        description: 'Configuration générale',
-        subItems: [
-          {
-            id: 'general-settings',
-            label: 'Général',
-            path: '/settings/general'
-          },
-          {
-            id: 'site-vitrine',
-            label: 'Site vitrine',
-            path: '/settings/site-vitrine'
-          },
-          {
-            id: 'mobile-app',
-            label: 'App mobile',
-            path: '/settings/mobile-app'
-          }
-        ]
+        id: 'teams',
+        label: 'Équipes',
+        icon: UserGroupIcon,
+        path: '/teams',
+        permissions: ['manage_staff'],
+        description: 'Gestion des équipes'
+      },
+      {
+        id: 'tasks',
+        label: 'Tâches',
+        icon: ClipboardDocumentListIcon,
+        path: '/tasks',
+        permissions: ['manage_tasks'],
+        description: 'Gestion des tâches'
       }
     ]
+  },
+  {
+    id: 'settings',
+    label: 'Paramètres',
+    icon: Cog6ToothIcon,
+    path: '/settings',
+    permissions: ['manage_settings'],
+    description: 'Configuration du système'
+  },
+  {
+    id: 'notifications',
+    label: 'Notifications',
+    icon: BellIcon,
+    path: '/notifications',
+    permissions: [],
+    description: 'Centre de notifications'
   },
   {
     id: 'help',
@@ -217,301 +226,207 @@ const Sidebar = () => {
   const currentUser = useSelector(selectCurrentUser);
   const userRole = useSelector(selectUserRole);
   
-  // État local pour les sous-menus ouverts
-  const [expandedItems, setExpandedItems] = useState(new Set());
+  // Hook pour les permissions
+  const { checkPermission, checkAnyPermission } = usePermissions();
+  
+  // État local
+  const [hoveredItem, setHoveredItem] = useState(null);
   
   // ========================================
-  // 🔄 LOGIQUE DE FILTRAGE
+  // 🔄 LOGIQUE DE PERMISSIONS
   // ========================================
   
-  // Filtrer les éléments selon les permissions
+  // Fonction utilitaire pour vérifier les permissions
+  const hasPermissionForItem = (permissions = []) => {
+    if (!permissions || permissions.length === 0) return true;
+    if (!currentUser) return false;
+    
+    // Admin a toutes les permissions
+    if (userRole === 'admin') return true;
+    
+    // Vérifier si l'utilisateur a au moins une des permissions requises
+    return checkAnyPermission(permissions);
+  };
+  
+  // ========================================
+  // 🎯 FILTRAGE DE LA NAVIGATION
+  // ========================================
+  
   const filteredNavigation = useMemo(() => {
-    const hasPermission = (permissions) => {
-      if (!permissions || permissions.length === 0) return true;
-      if (userRole === 'admin') return true;
+    return NAVIGATION_CONFIG.filter(section => {
+      // Si c'est une section avec des items
+      if (section.items) {
+        // Filtrer les items visibles de la section
+        const visibleItems = section.items.filter(item => 
+          hasPermissionForItem(item.permissions)
+        );
+        
+        // Garder la section seulement si elle a des items visibles
+        return visibleItems.length > 0;
+      }
       
-      const userPermissions = currentUser?.permissions || [];
-      return permissions.some(permission => userPermissions.includes(permission));
-    };
-    
-    const filterItems = (items) => {
-      return items.filter(item => {
-        if (item.type === 'section') {
-          const filteredSubItems = filterItems(item.items);
-          return filteredSubItems.length > 0;
-        }
-        return hasPermission(item.permissions);
-      }).map(item => {
-        if (item.type === 'section') {
-          return {
-            ...item,
-            items: filterItems(item.items)
-          };
-        }
-        return item;
-      });
-    };
-    
-    return filterItems(NAVIGATION_CONFIG);
-  }, [currentUser, userRole]);
+      // Pour les items individuels, vérifier leurs permissions
+      return hasPermissionForItem(section.permissions);
+    }).map(section => {
+      // Si c'est une section avec des items, filtrer les items
+      if (section.items) {
+        return {
+          ...section,
+          items: section.items.filter(item => 
+            hasPermissionForItem(item.permissions)
+          )
+        };
+      }
+      
+      return section;
+    });
+  }, [currentUser, userRole, checkAnyPermission]);
   
   // ========================================
   // 🎯 GESTIONNAIRES D'ÉVÉNEMENTS
   // ========================================
   
-  const handleCollapseSidebar = () => {
+  const handleToggleCollapse = () => {
     dispatch(collapseSidebar());
   };
   
-  const handleItemClick = (itemId, hasSubItems = false) => {
-    dispatch(setActiveSection(itemId));
-    
-    if (hasSubItems) {
-      setExpandedItems(prev => {
-        const newSet = new Set(prev);
-        if (newSet.has(itemId)) {
-          newSet.delete(itemId);
-        } else {
-          newSet.add(itemId);
-        }
-        return newSet;
-      });
-    }
-    
+  const handleItemClick = (item) => {
     // Fermer la sidebar sur mobile après clic
-    if (responsive.isMobile) {
-      dispatch({ type: 'ui/closeSidebar' });
-    }
-  };
-  
-  const isItemActive = (item) => {
-    if (item.path === '/' && location.pathname === '/') {
-      return true;
-    }
-    if (item.path !== '/' && location.pathname.startsWith(item.path)) {
-      return true;
-    }
-    if (item.subItems) {
-      return item.subItems.some(subItem => location.pathname.startsWith(subItem.path));
-    }
-    return false;
-  };
-  
-  const isItemExpanded = (itemId) => {
-    return expandedItems.has(itemId);
-  };
-  
-  // ========================================
-  // 🎨 CLASSES CSS DYNAMIQUES
-  // ========================================
-  
-  const getSidebarClasses = () => {
-    const classes = ['admin-sidebar'];
-    
-    if (sidebar.isOpen) classes.push('sidebar-open');
-    if (sidebar.isCollapsed) classes.push('sidebar-collapsed');
-    if (responsive.isMobile) classes.push('sidebar-mobile');
-    
-    return classes.join(' ');
-  };
-  
-  // ========================================
-  // 🎬 ANIMATIONS
-  // ========================================
-  
-  const sidebarVariants = {
-    open: {
-      x: 0,
-      transition: {
-        type: 'spring',
-        stiffness: 300,
-        damping: 30
-      }
-    },
-    closed: {
-      x: responsive.isMobile ? '-100%' : -240,
-      transition: {
-        type: 'spring',
-        stiffness: 300,
-        damping: 30
-      }
-    }
-  };
-  
-  const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: (i) => ({
-      opacity: 1,
-      x: 0,
-      transition: {
-        delay: i * 0.05,
-        duration: 0.3
-      }
-    })
-  };
-  
-  // ========================================
-  // 🎯 RENDU DES ÉLÉMENTS
-  // ========================================
-  
-  const renderNavigationItem = (item, index) => {
-    if (item.type === 'section') {
-      return (
-        <SidebarSection
-          key={item.id}
-          title={item.label}
-          collapsed={sidebar.isCollapsed}
-        >
-          {item.items.map((subItem, subIndex) => 
-            renderNavigationItem(subItem, subIndex)
-          )}
-        </SidebarSection>
-      );
+    if (responsive.isMobile && sidebar.isVisible) {
+      dispatch(collapseSidebar());
     }
     
-    const hasSubItems = item.subItems && item.subItems.length > 0;
-    const isActive = isItemActive(item);
-    const isExpanded = isItemExpanded(item.id);
-    
-    return (
-      <motion.div
-        key={item.id}
-        custom={index}
-        variants={itemVariants}
-        initial="hidden"
-        animate="visible"
-        className="sidebar-item-container"
-      >
-        <SidebarItem
-          item={item}
-          isActive={isActive}
-          isExpanded={isExpanded}
-          collapsed={sidebar.isCollapsed}
-          onClick={() => handleItemClick(item.id, hasSubItems)}
-        />
-        
-        {/* Sous-éléments */}
-        <AnimatePresence>
-          {hasSubItems && isExpanded && !sidebar.isCollapsed && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="sidebar-subitems"
-            >
-              {item.subItems.map(subItem => (
-                <NavLink
-                  key={subItem.id}
-                  to={subItem.path}
-                  className={({ isActive }) => 
-                    `sidebar-subitem ${isActive ? 'active' : ''}`
-                  }
-                  onClick={() => handleItemClick(subItem.id)}
-                >
-                  <span className="subitem-label">{subItem.label}</span>
-                </NavLink>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-    );
+    // Marquer la section comme active
+    dispatch(setActiveSection(item.id));
+  };
+  
+  const handleItemHover = (itemId) => {
+    if (sidebar.isCollapsed) {
+      setHoveredItem(itemId);
+    }
+  };
+  
+  const handleItemLeave = () => {
+    setHoveredItem(null);
   };
   
   // ========================================
-  // 🎯 RENDU PRINCIPAL
+  // 🎨 CLASSES CSS
+  // ========================================
+  
+  const sidebarClasses = [
+    'sidebar',
+    sidebar.isCollapsed ? 'is-collapsed' : '',
+    sidebar.isVisible ? 'is-visible' : 'is-hidden',
+    responsive.isMobile ? 'is-mobile' : '',
+    theme.current === 'dark' ? 'is-dark' : ''
+  ].filter(Boolean).join(' ');
+  
+  // ========================================
+  // 🎨 RENDU DU COMPOSANT
   // ========================================
   
   return (
-    <motion.aside
-      className={getSidebarClasses()}
-      variants={sidebarVariants}
-      animate={sidebar.isOpen ? 'open' : 'closed'}
-    >
-      <div className="sidebar-content">
-        {/* Header de la sidebar */}
+    <>
+      {/* Overlay mobile */}
+      {responsive.isMobile && sidebar.isVisible && (
+        <motion.div
+          className="sidebar-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={handleToggleCollapse}
+        />
+      )}
+      
+      {/* Sidebar principale */}
+      <motion.aside
+        className={sidebarClasses}
+        initial={false}
+        animate={{
+          width: sidebar.isCollapsed ? '60px' : '280px',
+          x: sidebar.isVisible ? 0 : (responsive.isMobile ? -280 : 0)
+        }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+      >
+        {/* En-tête */}
         <div className="sidebar-header">
-          <div className="sidebar-brand">
-            <img 
-              src="/assets/logos/zengest-mini.svg" 
-              alt="Zengest" 
-              className="sidebar-logo"
-            />
+          <motion.div
+            className="sidebar-brand"
+            animate={{ opacity: sidebar.isCollapsed ? 0 : 1 }}
+            transition={{ duration: 0.2 }}
+          >
             {!sidebar.isCollapsed && (
-              <motion.div
-                className="sidebar-brand-text"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ delay: 0.1 }}
-              >
-                <h2>Zengest</h2>
-                <span>Admin</span>
-              </motion.div>
+              <>
+                <img src="/logo.svg" alt="Zengest" className="sidebar-logo" />
+                <span className="sidebar-brand-text">Zengest Admin</span>
+              </>
             )}
-          </div>
+          </motion.div>
           
-          {/* Bouton collapse (desktop seulement) */}
-          {!responsive.isMobile && (
-            <motion.button
-              className="sidebar-collapse-button"
-              onClick={handleCollapseSidebar}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              title={sidebar.isCollapsed ? 'Développer' : 'Réduire'}
-            >
-              {sidebar.isCollapsed ? (
-                <ChevronRightIcon className="icon" />
-              ) : (
-                <ChevronLeftIcon className="icon" />
-              )}
-            </motion.button>
-          )}
+          <button
+            className="sidebar-toggle"
+            onClick={handleToggleCollapse}
+            title={sidebar.isCollapsed ? 'Développer' : 'Réduire'}
+          >
+            {sidebar.isCollapsed ? (
+              <ChevronRightIcon className="h-5 w-5" />
+            ) : (
+              <ChevronLeftIcon className="h-5 w-5" />
+            )}
+          </button>
         </div>
         
-        {/* Navigation principale */}
-        <nav className="sidebar-navigation">
+        {/* Navigation */}
+        <nav className="sidebar-nav">
           <div className="sidebar-nav-content">
-            {filteredNavigation.map((item, index) => 
-              renderNavigationItem(item, index)
-            )}
+            {filteredNavigation.map((section, index) => (
+              <SidebarSection
+                key={section.id}
+                section={section}
+                isCollapsed={sidebar.isCollapsed}
+                currentUser={currentUser}
+                onItemClick={handleItemClick}
+                onItemHover={handleItemHover}
+                onItemLeave={handleItemLeave}
+                hoveredItem={hoveredItem}
+              />
+            ))}
           </div>
         </nav>
         
-        {/* Footer de la sidebar */}
+        {/* Pied de page */}
         {!sidebar.isCollapsed && (
           <motion.div
             className="sidebar-footer"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            transition={{ delay: 0.2 }}
           >
-            <div className="sidebar-user-info">
-              <div className="user-avatar-small">
+            <div className="sidebar-user">
+              <div className="sidebar-user-avatar">
                 {currentUser?.avatar ? (
-                  <img src={currentUser.avatar} alt={currentUser.firstName} />
+                  <img src={currentUser.avatar} alt={currentUser.name} />
                 ) : (
-                  <span className="user-initials">
-                    {currentUser?.firstName?.[0]}{currentUser?.lastName?.[0]}
-                  </span>
+                  <div className="sidebar-user-avatar-placeholder">
+                    {currentUser?.name?.charAt(0) || 'U'}
+                  </div>
                 )}
               </div>
-              <div className="user-details">
-                <span className="user-name">
-                  {currentUser?.firstName} {currentUser?.lastName}
-                </span>
-                <span className="user-role">{currentUser?.role}</span>
+              
+              <div className="sidebar-user-info">
+                <div className="sidebar-user-name">
+                  {currentUser?.name || 'Utilisateur'}
+                </div>
+                <div className="sidebar-user-role">
+                  {currentUser?.role || 'Employé'}
+                </div>
               </div>
-            </div>
-            
-            <div className="sidebar-version">
-              <span>v{import.meta.env.VITE_APP_VERSION || '1.0.0'}</span>
             </div>
           </motion.div>
         )}
-      </div>
-    </motion.aside>
+      </motion.aside>
+    </>
   );
 };
 

@@ -1,0 +1,442 @@
+// web-admin/src/styles/components/ReservationDetailsModal.scss
+@import '../_variables.scss';
+
+// ========================================
+// 📋 MODAL DÉTAILS RÉSERVATION
+// ========================================
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--overlay-backdrop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.reservation-details-modal {
+  background: var(--color-surface);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-2xl);
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+  
+  @media (max-width: 768px) {
+    max-width: 95vw;
+    max-height: 95vh;
+    margin: 1rem;
+  }
+}
+
+// ========================================
+// 📄 EN-TÊTE MODAL
+// ========================================
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.modal-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  padding: 0.5rem;
+  border-radius: var(--radius-small);
+  transition: all var(--transition-fast);
+  
+  &:hover {
+    color: var(--color-text);
+    background-color: var(--color-background-secondary);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+// ========================================
+// 🏷️ BADGE DE STATUT
+// ========================================
+
+.status-badge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  
+  &--warning {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+  }
+  
+  &--success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #059669;
+  }
+  
+  &--info {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+  }
+  
+  &--danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+  }
+  
+  &--secondary {
+    background-color: var(--color-background-secondary);
+    color: var(--color-text-muted);
+  }
+}
+
+// ========================================
+// 📋 CONTENU MODAL
+// ========================================
+
+.modal-content {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.reservation-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+// ========================================
+// 📄 SECTIONS D'INFORMATIONS
+// ========================================
+
+.info-section {
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 1rem;
+    
+    svg {
+      color: var(--color-primary);
+    }
+  }
+}
+
+// ========================================
+// 🗂️ GRILLE D'INFORMATIONS
+// ========================================
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: var(--color-background-secondary);
+  border-radius: var(--radius-medium);
+  
+  svg {
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+  }
+  
+  span {
+    font-weight: 500;
+    color: var(--color-text);
+  }
+}
+
+// ========================================
+// 👤 INFORMATIONS CLIENT
+// ========================================
+
+.customer-info {
+  .customer-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 1rem;
+  }
+  
+  .customer-contacts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    svg {
+      color: var(--color-text-muted);
+      flex-shrink: 0;
+    }
+    
+    a {
+      color: var(--color-primary);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+      
+      &:hover {
+        color: var(--color-accent);
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// ========================================
+// 💬 DEMANDES SPÉCIALES
+// ========================================
+
+.special-requests {
+  background-color: var(--color-background-secondary);
+  border-radius: var(--radius-medium);
+  padding: 1rem;
+  color: var(--color-text);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.internal-notes {
+  background-color: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: var(--radius-medium);
+  padding: 1rem;
+  color: var(--color-text);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+// ========================================
+// 📅 TIMELINE (HISTORIQUE)
+// ========================================
+
+.timeline {
+  position: relative;
+  padding-left: 2rem;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--color-border);
+  }
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 1.5rem;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -2rem;
+  top: 0.25rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background-color: var(--color-background-secondary);
+  border: 2px solid var(--color-border);
+  
+  &--success {
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+  }
+  
+  &--danger {
+    background-color: var(--color-danger);
+    border-color: var(--color-danger);
+  }
+}
+
+.timeline-content {
+  .timeline-title {
+    font-weight: 500;
+    color: var(--color-text);
+    margin-bottom: 0.25rem;
+  }
+  
+  .timeline-date {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.25rem;
+  }
+  
+  .timeline-reason {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    font-style: italic;
+  }
+}
+
+// ========================================
+// 🦶 FOOTER MODAL
+// ========================================
+
+.modal-footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+  background-color: var(--color-background-secondary);
+  border-radius: 0 0 var(--radius-large) var(--radius-large);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    justify-content: stretch;
+    
+    .button {
+      flex: 1;
+    }
+  }
+}
+
+// ========================================
+// ❌ FORMULAIRE D'ANNULATION
+// ========================================
+
+.cancel-form {
+  .form-group {
+    margin-top: 1rem;
+    
+    label {
+      display: block;
+      font-weight: 500;
+      color: var(--color-text);
+      margin-bottom: 0.5rem;
+      
+      .required {
+        color: var(--color-danger);
+        margin-left: 0.25rem;
+      }
+    }
+    
+    textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-medium);
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      font-family: inherit;
+      resize: vertical;
+      min-height: 4rem;
+      
+      &:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(235, 47, 6, 0.1);
+      }
+      
+      &::placeholder {
+        color: var(--color-text-muted);
+      }
+    }
+  }
+}
+
+// ========================================
+// 🎬 ANIMATIONS
+// ========================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(2rem) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// ========================================
+// ♿ ACCESSIBILITÉ
+// ========================================
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .reservation-details-modal {
+    animation: none;
+  }
+}
+
+// Mode contraste élevé
+@media (prefers-contrast: high) {
+  .status-badge {
+    border: 1px solid currentColor;
+  }
+  
+  .timeline-marker {
+    border-width: 3px;
+  }
+}

@@ -1,0 +1,844 @@
+// ========================================
+// 📊 TABLE.SCSS - STYLES DU COMPOSANT TABLE
+// ========================================
+// Fichier: web-admin/src/components/common/Table/Table.scss
+//
+// Styles complets pour le composant Table avec support des fonctionnalités
+// avancées : tri, pagination, sélection, actions, filtres et responsive.
+
+// ========================================
+// 📝 IMPORTS ET VARIABLES
+// ========================================
+
+@import '../../../styles/variables';
+
+// Variables locales spécifiques aux tables
+$table-border-width: 1px;
+$table-border-color: var(--border-color);
+$table-border-radius: var(--radius-large);
+$table-transition: all var(--duration-normal) var(--easing-ease-in-out);
+
+// Couleurs
+$table-bg: var(--background-primary);
+$table-header-bg: var(--background-secondary);
+$table-row-hover: var(--background-tertiary);
+$table-row-selected: rgba(var(--primary-rgb), 0.05);
+$table-text: var(--text-primary);
+$table-text-secondary: var(--text-secondary);
+
+// Espacements
+$table-cell-padding: 1rem;
+$table-cell-padding-compact: 0.75rem;
+$table-header-height: 3rem;
+$table-row-height: 3.5rem;
+$table-row-height-compact: 2.75rem;
+
+// ========================================
+// 📦 CONTENEUR PRINCIPAL
+// ========================================
+
+.table-container {
+  // Layout de base
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: $table-bg;
+  border-radius: $table-border-radius;
+  box-shadow: var(--shadow-light);
+  overflow: hidden;
+  
+  // Transitions
+  transition: $table-transition;
+  
+  // États du conteneur
+  &.table-container--loading {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  
+  // Variantes d'apparence
+  &.table-container--bordered {
+    border: $table-border-width solid $table-border-color;
+  }
+  
+  &.table-container--shadow {
+    box-shadow: var(--shadow-medium);
+  }
+}
+
+// ========================================
+// 🛠️ BARRE D'OUTILS
+// ========================================
+
+.table__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: var(--background-secondary);
+  border-bottom: $table-border-width solid $table-border-color;
+  gap: 1rem;
+  flex-wrap: wrap;
+  
+  // Responsive
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+}
+
+.table__toolbar-left,
+.table__toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
+}
+
+// ========================================
+// 🔍 RECHERCHE
+// ========================================
+
+.table__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 250px;
+  max-width: 400px;
+  flex: 1;
+  
+  @media (max-width: 768px) {
+    min-width: 200px;
+    max-width: none;
+    width: 100%;
+  }
+}
+
+.table__search-icon {
+  position: absolute;
+  left: 0.75rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--text-light);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.table__search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-medium);
+  background: var(--background-primary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  transition: $table-transition;
+  
+  &::placeholder {
+    color: var(--text-light);
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+  }
+}
+
+// ========================================
+// 🎛️ FILTRES
+// ========================================
+
+.table__filters {
+  padding: 1rem;
+  background: var(--background-tertiary);
+  border-bottom: $table-border-width solid $table-border-color;
+}
+
+// ========================================
+// 📋 ACTIONS EN MASSE
+// ========================================
+
+.table__bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: rgba(var(--primary-rgb), 0.1);
+  border-radius: var(--radius-medium);
+  
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+.table__selection-count {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  white-space: nowrap;
+}
+
+// ========================================
+// 📊 WRAPPER DE TABLE
+// ========================================
+
+.table__wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex: 1;
+  min-height: 0;
+  
+  // Scrollbar personnalisé
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: var(--background-secondary);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+    
+    &:hover {
+      background: var(--text-light);
+    }
+  }
+  
+  // Mode responsive
+  .table-container--responsive & {
+    @media (max-width: 768px) {
+      overflow-x: scroll;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+}
+
+// ========================================
+// 📋 TABLE PRINCIPALE
+// ========================================
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  
+  // Mode compact
+  .table-container--compact & {
+    font-size: 0.8125rem;
+  }
+}
+
+// ========================================
+// 🎯 EN-TÊTE DE TABLE
+// ========================================
+
+.table__head {
+  background: $table-header-bg;
+  border-bottom: 2px solid $table-border-color;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.table__row--header {
+  height: $table-header-height;
+  
+  .table-container--compact & {
+    height: calc($table-header-height - 0.5rem);
+  }
+}
+
+.table__cell--header {
+  padding: $table-cell-padding;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: left;
+  user-select: none;
+  
+  .table-container--compact & {
+    padding: $table-cell-padding-compact;
+  }
+  
+  // Cellule triable
+  &.table__cell--sortable {
+    cursor: pointer;
+    transition: $table-transition;
+    
+    &:hover {
+      background: var(--background-tertiary);
+      color: var(--text-primary);
+    }
+    
+    &:active {
+      background: var(--background-quaternary);
+    }
+  }
+}
+
+.table__header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: 1.5rem;
+}
+
+.table__header-text {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table__sort-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  
+  .icon {
+    width: 1rem;
+    height: 1rem;
+    color: var(--text-light);
+    transition: color var(--duration-fast);
+  }
+  
+  .table__cell--sortable:hover & .icon {
+    color: var(--text-secondary);
+  }
+}
+
+// ========================================
+// 📝 CORPS DE TABLE
+// ========================================
+
+.table__body {
+  background: $table-bg;
+}
+
+.table__row {
+  height: $table-row-height;
+  border-bottom: $table-border-width solid $table-border-color;
+  transition: $table-transition;
+  
+  .table-container--compact & {
+    height: $table-row-height-compact;
+  }
+  
+  // États des lignes
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  // Lignes rayées
+  .table-container--striped & {
+    &:nth-child(even) {
+      background: var(--background-secondary);
+    }
+  }
+  
+  // Hover
+  .table-container--hover & {
+    &:hover:not(.table__row--selected):not(.table__row--loading) {
+      background: $table-row-hover;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-light);
+    }
+  }
+  
+  // Sélection
+  &.table__row--selected {
+    background: $table-row-selected;
+    border-color: var(--primary-color);
+    
+    .table-container--striped & {
+      background: $table-row-selected;
+    }
+  }
+  
+  // États spéciaux
+  &.table__row--loading {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  
+  &.table__row--error {
+    background: rgba(var(--danger-rgb), 0.05);
+    border-color: var(--danger-color);
+  }
+  
+  &.table__row--empty {
+    background: var(--background-secondary);
+    
+    &:hover {
+      background: var(--background-secondary) !important;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+  }
+}
+
+// ========================================
+// 📋 CELLULES
+// ========================================
+
+.table__cell {
+  padding: $table-cell-padding;
+  vertical-align: middle;
+  color: $table-text;
+  border-right: $table-border-width solid transparent;
+  transition: $table-transition;
+  
+  .table-container--compact & {
+    padding: $table-cell-padding-compact;
+  }
+  
+  .table-container--bordered & {
+    border-right-color: $table-border-color;
+    
+    &:last-child {
+      border-right: none;
+    }
+  }
+  
+  // Types de cellules
+  &.table__cell--checkbox {
+    width: 3rem;
+    padding: 0.5rem;
+    text-align: center;
+    
+    .table-container--compact & {
+      width: 2.5rem;
+      padding: 0.375rem;
+    }
+  }
+  
+  &.table__cell--actions {
+    width: auto;
+    min-width: 100px;
+    text-align: right;
+    white-space: nowrap;
+  }
+  
+  &.table__cell--error {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+  }
+  
+  &.table__cell--empty {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-light);
+  }
+  
+  // Contenu tronqué
+  &.table__cell--truncate {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  // Alignements
+  &.table__cell--center {
+    text-align: center;
+  }
+  
+  &.table__cell--right {
+    text-align: right;
+  }
+}
+
+// ========================================
+// ☑️ CHECKBOX
+// ========================================
+
+.table__checkbox {
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: var(--radius-small);
+  border: 2px solid var(--border-color);
+  background: var(--background-primary);
+  cursor: pointer;
+  transition: $table-transition;
+  
+  &:checked {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+  }
+  
+  &:indeterminate {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+}
+
+// ========================================
+// 💀 SKELETON LOADING
+// ========================================
+
+.table__skeleton {
+  height: 1rem;
+  background: linear-gradient(
+    90deg,
+    var(--background-secondary) 25%,
+    var(--background-tertiary) 50%,
+    var(--background-secondary) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--radius-small);
+  animation: table-skeleton-loading 1.5s infinite;
+  
+  &.table__skeleton--checkbox {
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: var(--radius-small);
+  }
+  
+  &.table__skeleton--actions {
+    width: 60px;
+    height: 2rem;
+    border-radius: var(--radius-medium);
+  }
+}
+
+@keyframes table-skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// ========================================
+// ❌ ÉTATS D'ERREUR ET VIDE
+// ========================================
+
+.table__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  
+  p {
+    margin: 0;
+    
+    &:first-child {
+      font-weight: 600;
+      color: var(--danger-color);
+    }
+  }
+}
+
+.table__error-message {
+  font-size: 0.8125rem;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.table__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  color: var(--text-light);
+  
+  p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  .table__empty-icon {
+    width: 3rem;
+    height: 3rem;
+    opacity: 0.5;
+  }
+}
+
+// ========================================
+// 🎬 ANIMATIONS
+// ========================================
+
+// Animation d'entrée des lignes
+.table__row {
+  animation: table-row-enter 0.3s ease-out;
+}
+
+@keyframes table-row-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Animation des actions
+.table__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  
+  .button {
+    opacity: 0.7;
+    transition: opacity var(--duration-fast);
+  }
+  
+  .table__row:hover & .button {
+    opacity: 1;
+  }
+}
+
+// ========================================
+// 📱 RESPONSIVE
+// ========================================
+
+@media (max-width: 1024px) {
+  .table__cell {
+    padding: 0.75rem 0.5rem;
+    
+    &.table__cell--checkbox {
+      width: 2.5rem;
+      padding: 0.375rem;
+    }
+  }
+  
+  .table__header-text {
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .table-container {
+    border-radius: var(--radius-medium);
+    margin: 0 -1rem;
+  }
+  
+  .table__toolbar {
+    padding: 0.75rem;
+  }
+  
+  .table {
+    font-size: 0.8125rem;
+  }
+  
+  .table__cell {
+    padding: 0.5rem 0.375rem;
+    
+    &.table__cell--checkbox {
+      width: 2rem;
+      padding: 0.25rem;
+    }
+    
+    &.table__cell--actions {
+      min-width: 80px;
+    }
+  }
+  
+  .table__checkbox {
+    width: 1rem;
+    height: 1rem;
+  }
+  
+  // Mode table mobile responsif
+  .table-container--responsive {
+    .table__wrapper {
+      overflow-x: auto;
+    }
+    
+    .table {
+      min-width: 600px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .table__toolbar {
+    padding: 0.5rem;
+  }
+  
+  .table__search {
+    min-width: 150px;
+  }
+  
+  .table__cell {
+    padding: 0.375rem 0.25rem;
+    font-size: 0.75rem;
+    
+    &.table__cell--error,
+    &.table__cell--empty {
+      padding: 1.5rem 1rem;
+    }
+  }
+  
+  .table__bulk-actions {
+    padding: 0.375rem 0.75rem;
+    gap: 0.5rem;
+  }
+  
+  .table__selection-count {
+    font-size: 0.75rem;
+  }
+}
+
+// ========================================
+// 🌙 MODE SOMBRE
+// ========================================
+
+@media (prefers-color-scheme: dark) {
+  .table-container {
+    background: var(--background-secondary);
+    border-color: var(--border-dark);
+  }
+  
+  .table__head {
+    background: var(--background-tertiary);
+    border-color: var(--border-dark);
+  }
+  
+  .table__row {
+    border-color: var(--border-dark);
+    
+    .table-container--striped & {
+      &:nth-child(even) {
+        background: var(--background-tertiary);
+      }
+    }
+    
+    .table-container--hover & {
+      &:hover {
+        background: var(--background-quaternary);
+      }
+    }
+    
+    &.table__row--selected {
+      background: rgba(var(--primary-rgb), 0.1);
+      border-color: var(--primary-color);
+    }
+  }
+  
+  .table__search-input {
+    background: var(--background-secondary);
+    border-color: var(--border-dark);
+    color: var(--text-primary);
+  }
+  
+  .table__checkbox {
+    background: var(--background-secondary);
+    border-color: var(--border-dark);
+  }
+  
+  .table__skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--background-tertiary) 25%,
+      var(--background-quaternary) 50%,
+      var(--background-tertiary) 75%
+    );
+    background-size: 200% 100%;
+  }
+}
+
+// ========================================
+// 🎯 VARIANTES ET UTILITÉS
+// ========================================
+
+// Table dense
+.table-container--dense {
+  .table__cell {
+    padding: 0.5rem;
+  }
+  
+  .table__row {
+    height: 2.5rem;
+  }
+  
+  .table__row--header {
+    height: 2.25rem;
+  }
+}
+
+// Table avec bordures internes
+.table-container--grid {
+  .table__cell {
+    border-right: $table-border-width solid $table-border-color;
+    
+    &:last-child {
+      border-right: none;
+    }
+  }
+}
+
+// Table fixe (hauteur limitée)
+.table-container--fixed {
+  height: 400px;
+  
+  .table__wrapper {
+    overflow-y: auto;
+  }
+  
+  .table__head {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+}
+
+// Table sans ombre
+.table-container--flat {
+  box-shadow: none;
+  border: $table-border-width solid $table-border-color;
+}
+
+// ========================================
+// 🔧 DEBUG ET DÉVELOPPEMENT
+// ========================================
+
+@if $debug-mode {
+  .table-container {
+    // Afficher les informations de debug
+    &::before {
+      content: 'Table: ' attr(class);
+      position: absolute;
+      top: -1.5rem;
+      left: 0;
+      font-size: 0.625rem;
+      color: #999;
+      pointer-events: none;
+      z-index: 20;
+    }
+    
+    .table__wrapper {
+      outline: 1px dashed rgba(255, 0, 0, 0.3);
+    }
+    
+    .table__head {
+      outline: 1px dashed rgba(0, 255, 0, 0.3);
+    }
+    
+    .table__body {
+      outline: 1px dashed rgba(0, 0, 255, 0.3);
+    }
+  }
+}

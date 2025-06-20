@@ -1,117 +1,217 @@
-import React, { useState, useEffect } from 'react';
+// web-admin/src/pages/Reservations/ReservationsPage.jsx - VERSION MISE À JOUR
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
+  PlusIcon,
   CalendarDaysIcon,
   UserGroupIcon,
-  PlusIcon,
+  ClockIcon,
+  MagnifyingGlassIcon,
+  FunnelIcon,
+  TableCellsIcon,
+  CheckCircleIcon,
+  XMarkIcon,
   EyeIcon,
-  PencilIcon,
-  CheckIcon,
-  XMarkIcon
+  PencilIcon
 } from '@heroicons/react/24/outline';
 
+// Actions Redux
+import { 
+  fetchReservations,
+  setReservationsFilters,
+  setReservationsPagination 
+} from '@/store/slices/reservationsSlice';
+
+// Sélecteurs
+import { 
+  selectReservations,
+  selectReservationsLoading,
+  selectReservationsPagination,
+  selectReservationsFilters 
+} from '@/store/slices/reservationsSlice';
+
 // Composants
-import Table from '@/components/common/Table/Table';
-import LoadingSpinner from '@/components/common/Loading/LoadingSpinner';
+import { LoadingSpinner, Table, Button, Input } from '@/components/common';
+import ReservationDetailsModal from '@/components/reservations/ReservationDetailsModal/ReservationDetailsModal';
+import ReservationFormModal from '@/components/reservations/ReservationFormModal/ReservationFormModal';
 
 // Hooks
 import { useDocumentTitle } from '@/hooks/ui/useDocumentTitle';
+import useReservationHandlers from '@/hooks/reservations/useReservationHandlers';
 
 // Utilitaires
-import { formatDateTime, formatDate, formatTime } from '../../../shared/utils/formatters';
+import { 
+  formatDate, 
+  formatTime, 
+  formatGuestCount,
+  formatStatus,
+  getStatusColor,
+  filterBySearch 
+} from '@/utils';
+import { RESERVATION_STATUS } from '@/utils';
+
+// Styles
+import '../../styles/pages/ReservationsPage.scss';
 
 // ========================================
-// 📅 PAGE GESTION RÉSERVATIONS
+// 📋 PAGE GESTION RÉSERVATIONS
 // ========================================
 
 const ReservationsPage = () => {
   const dispatch = useDispatch();
   
-  // États locaux
-  const [reservations, setReservations] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({
-    date: new Date().toISOString().split('T')[0],
-    status: '',
-    search: ''
-  });
+  // ========================================
+  // 🔄 ÉTATS REDUX
+  // ========================================
+  
+  const reservations = useSelector(selectReservations);
+  const loading = useSelector(selectReservationsLoading);
+  const pagination = useSelector(selectReservationsPagination);
+  const filters = useSelector(selectReservationsFilters);
+
+  // ========================================
+  // 🎯 HOOKS PERSONNALISÉS
+  // ========================================
   
   useDocumentTitle('Gestion des Réservations - Zengest Admin');
   
+  const {
+    selectedReservation,
+    isDetailsModalOpen,
+    isEditModalOpen,
+    isFormModalOpen,
+    loading: handlerLoading,
+    
+    // Gestionnaires principaux
+    handleViewReservation,
+    handleEditReservation,
+    handleConfirmReservation,
+    handleCancelReservation,
+    handleAddReservation,
+    
+    // Gestionnaires de modals
+    closeDetailsModal,
+    closeEditModal,
+    closeFormModal,
+    
+    // Actions CRUD
+    handleCreateReservation,
+    handleUpdateReservation,
+    handleStatusChange
+  } = useReservationHandlers();
+
+  // ========================================
+  // 🔄 ÉTATS LOCAUX
+  // ========================================
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [dateFilter, setDateFilter] = useState('');
+  const [selectedReservations, setSelectedReservations] = useState([]);
+
   // ========================================
   // 🔄 EFFETS
   // ========================================
   
   useEffect(() => {
-    // Simuler le chargement des réservations
-    setTimeout(() => {
-      setReservations([
-        {
-          _id: '1',
-          reservationNumber: 'RES-2025-001',
-          customer: {
-            firstName: 'Jean',
-            lastName: 'Dupont',
-            phone: '+33123456789',
-            email: 'jean.dupont@email.com'
-          },
-          dateTime: new Date('2025-06-17T19:30:00'),
-          partySize: 4,
-          status: 'confirmed',
-          specialRequests: ['Table près de la fenêtre'],
-          assignedTable: { number: '12' },
-          createdAt: new Date('2025-06-15T10:00:00')
-        },
-        {
-          _id: '2',
-          reservationNumber: 'RES-2025-002',
-          customer: {
-            firstName: 'Marie',
-            lastName: 'Martin',
-            phone: '+33987654321',
-            email: 'marie.martin@email.com'
-          },
-          dateTime: new Date('2025-06-17T20:00:00'),
-          partySize: 2,
-          status: 'pending',
-          specialRequests: [],
-          assignedTable: null,
-          createdAt: new Date('2025-06-16T14:30:00')
-        },
-        {
-          _id: '3',
-          reservationNumber: 'RES-2025-003',
-          customer: {
-            firstName: 'Pierre',
-            lastName: 'Bernard',
-            phone: '+33555666777',
-            email: 'pierre.bernard@email.com'
-          },
-          dateTime: new Date('2025-06-18T12:30:00'),
-          partySize: 6,
-          status: 'confirmed',
-          specialRequests: ['Anniversaire', 'Menu végétarien'],
-          assignedTable: { number: '8' },
-          createdAt: new Date('2025-06-14T16:45:00')
-        }
+    dispatch(fetchReservations({ 
+      page: pagination.page,
+      limit: pagination.limit,
+      ...filters 
+    }));
+  }, [dispatch, pagination, filters]);
+
+  // ========================================
+  // 🧮 DONNÉES CALCULÉES
+  // ========================================
+  
+  // Filtrer et rechercher dans les réservations
+  const filteredReservations = useMemo(() => {
+    let filtered = [...reservations];
+    
+    // Filtre par recherche textuelle
+    if (searchTerm.trim()) {
+      filtered = filterBySearch(filtered, searchTerm, [
+        'customer.firstName',
+        'customer.lastName', 
+        'customer.email',
+        'customer.phone',
+        'reservationNumber'
       ]);
-      setLoading(false);
-    }, 1000);
-  }, [filters]);
-  
+    }
+    
+    // Filtre par statut
+    if (statusFilter) {
+      filtered = filtered.filter(res => res.status === statusFilter);
+    }
+    
+    // Filtre par date
+    if (dateFilter) {
+      const filterDate = new Date(dateFilter).toDateString();
+      filtered = filtered.filter(res => 
+        new Date(res.dateTime).toDateString() === filterDate
+      );
+    }
+    
+    return filtered;
+  }, [reservations, searchTerm, statusFilter, dateFilter]);
+
+  // Statistiques rapides
+  const stats = useMemo(() => {
+    return {
+      total: reservations.length,
+      pending: reservations.filter(r => r.status === RESERVATION_STATUS.PENDING).length,
+      confirmed: reservations.filter(r => r.status === RESERVATION_STATUS.CONFIRMED).length,
+      seated: reservations.filter(r => r.status === RESERVATION_STATUS.SEATED).length,
+      completed: reservations.filter(r => r.status === RESERVATION_STATUS.COMPLETED).length,
+      today: reservations.filter(r => {
+        const today = new Date().toDateString();
+        return new Date(r.dateTime).toDateString() === today;
+      }).length
+    };
+  }, [reservations]);
+
   // ========================================
-  // 📊 CONFIGURATION DES COLONNES
+  // 🎯 GESTIONNAIRES D'ÉVÉNEMENTS
   // ========================================
   
-  const columns = [
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleStatusFilterChange = (e) => {
+    setStatusFilter(e.target.value);
+  };
+
+  const handleDateFilterChange = (e) => {
+    setDateFilter(e.target.value);
+  };
+
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('');
+    setDateFilter('');
+  };
+
+  const handlePageChange = (newPage) => {
+    dispatch(setReservationsPagination({ 
+      ...pagination, 
+      page: newPage 
+    }));
+  };
+
+  // ========================================
+  // 📊 CONFIGURATION DU TABLEAU
+  // ========================================
+  
+  const tableColumns = [
     {
       key: 'reservationNumber',
       title: 'N° Réservation',
-      type: 'text',
       sortable: true,
       render: (reservation) => (
         <div>
-          <p className="has-text-weight-semibold">{reservation.reservationNumber}</p>
+          <p className="has-text-weight-semibold">#{reservation.reservationNumber}</p>
           <p className="is-size-7 has-text-grey">
             {formatDate(reservation.createdAt)}
           </p>
@@ -121,7 +221,6 @@ const ReservationsPage = () => {
     {
       key: 'customer',
       title: 'Client',
-      type: 'text',
       render: (reservation) => (
         <div>
           <p className="has-text-weight-semibold">
@@ -137,7 +236,6 @@ const ReservationsPage = () => {
     {
       key: 'dateTime',
       title: 'Date & Heure',
-      type: 'datetime',
       sortable: true,
       render: (reservation) => (
         <div>
@@ -151,16 +249,15 @@ const ReservationsPage = () => {
       )
     },
     {
-      key: 'partySize',
+      key: 'guestsCount',
       title: 'Personnes',
-      type: 'number',
       render: (reservation) => (
         <div className="has-text-centered">
           <span className="tag is-light is-medium">
             <span className="icon">
               <UserGroupIcon className="h-4 w-4" />
             </span>
-            <span>{reservation.partySize}</span>
+            <span>{formatGuestCount(reservation.guestsCount)}</span>
           </span>
         </div>
       )
@@ -168,11 +265,10 @@ const ReservationsPage = () => {
     {
       key: 'table',
       title: 'Table',
-      type: 'text',
       render: (reservation) => (
-        reservation.assignedTable ? (
+        reservation.table ? (
           <span className="tag is-info">
-            Table {reservation.assignedTable.number}
+            Table {reservation.table.number}
           </span>
         ) : (
           <span className="tag is-light">Non assignée</span>
@@ -182,147 +278,74 @@ const ReservationsPage = () => {
     {
       key: 'status',
       title: 'Statut',
-      type: 'badge',
       render: (reservation) => {
-        const statusConfig = {
-          pending: { color: 'warning', label: 'En attente' },
-          confirmed: { color: 'success', label: 'Confirmée' },
-          seated: { color: 'info', label: 'Installée' },
-          completed: { color: 'primary', label: 'Terminée' },
-          cancelled: { color: 'danger', label: 'Annulée' },
-          no_show: { color: 'dark', label: 'Absence' }
-        };
-        
-        const config = statusConfig[reservation.status] || statusConfig.pending;
+        const color = getStatusColor(reservation.status);
+        const label = formatStatus(reservation.status);
         
         return (
-          <span className={`tag is-${config.color}`}>
-            {config.label}
+          <span className={`tag is-${color}`}>
+            {label}
           </span>
         );
       }
     },
     {
-      key: 'specialRequests',
-      title: 'Demandes spéciales',
-      type: 'text',
-      render: (reservation) => (
-        reservation.specialRequests.length > 0 ? (
-          <div>
-            {reservation.specialRequests.slice(0, 2).map((request, index) => (
-              <span key={index} className="tag is-light is-small mr-1 mb-1">
-                {request}
-              </span>
-            ))}
-            {reservation.specialRequests.length > 2 && (
-              <span className="tag is-light is-small">
-                +{reservation.specialRequests.length - 2}
-              </span>
-            )}
-          </div>
-        ) : (
-          <span className="has-text-grey">Aucune</span>
-        )
-      )
-    },
-    {
       key: 'actions',
       title: 'Actions',
-      type: 'custom',
-      width: '150px',
       render: (reservation) => (
-        <div className="buttons is-small">
-          <button 
-            className="button is-small is-outlined"
+        <div className="buttons are-small">
+          <Button
+            size="small"
+            variant="outline"
+            leftIcon={EyeIcon}
             onClick={() => handleViewReservation(reservation)}
             title="Voir les détails"
           >
-            <span className="icon">
-              <EyeIcon className="h-4 w-4" />
-            </span>
-          </button>
+            Voir
+          </Button>
           
-          <button 
-            className="button is-small is-info is-outlined"
-            onClick={() => handleEditReservation(reservation)}
-            title="Modifier"
-          >
-            <span className="icon">
-              <PencilIcon className="h-4 w-4" />
-            </span>
-          </button>
-          
-          {reservation.status === 'pending' && (
-            <button 
-              className="button is-small is-success is-outlined"
-              onClick={() => handleConfirmReservation(reservation)}
-              title="Confirmer"
-            >
-              <span className="icon">
-                <CheckIcon className="h-4 w-4" />
-              </span>
-            </button>
+          {reservation.status === RESERVATION_STATUS.PENDING && (
+            <>
+              <Button
+                size="small"
+                variant="success"
+                leftIcon={CheckCircleIcon}
+                onClick={() => handleConfirmReservation(reservation)}
+                loading={handlerLoading}
+                title="Confirmer la réservation"
+              >
+                Confirmer
+              </Button>
+              
+              <Button
+                size="small"
+                variant="outline"
+                leftIcon={PencilIcon}
+                onClick={() => handleEditReservation(reservation)}
+                title="Modifier la réservation"
+              >
+                Modifier
+              </Button>
+            </>
           )}
           
-          {reservation.status !== 'cancelled' && (
-            <button 
-              className="button is-small is-danger is-outlined"
+          {[RESERVATION_STATUS.PENDING, RESERVATION_STATUS.CONFIRMED].includes(reservation.status) && (
+            <Button
+              size="small"
+              variant="danger"
+              leftIcon={XMarkIcon}
               onClick={() => handleCancelReservation(reservation)}
-              title="Annuler"
+              loading={handlerLoading}
+              title="Annuler la réservation"
             >
-              <span className="icon">
-                <XMarkIcon className="h-4 w-4" />
-              </span>
-            </button>
+              Annuler
+            </Button>
           )}
         </div>
       )
     }
   ];
-  
-  // ========================================
-  // 🎯 GESTIONNAIRES D'ÉVÉNEMENTS
-  // ========================================
-  
-  const handleViewReservation = (reservation) => {
-    console.log('Voir réservation:', reservation);
-    // TODO: Ouvrir modal de détails
-  };
-  
-  const handleEditReservation = (reservation) => {
-    console.log('Modifier réservation:', reservation);
-    // TODO: Ouvrir formulaire d'édition
-  };
-  
-  const handleConfirmReservation = (reservation) => {
-    console.log('Confirmer réservation:', reservation);
-    // TODO: Confirmer la réservation
-  };
-  
-  const handleCancelReservation = (reservation) => {
-    console.log('Annuler réservation:', reservation);
-    // TODO: Annuler la réservation
-  };
-  
-  const handleAddReservation = () => {
-    console.log('Ajouter nouvelle réservation');
-    // TODO: Ouvrir formulaire de création
-  };
-  
-  // ========================================
-  // 📊 STATISTIQUES
-  // ========================================
-  
-  const getStats = () => {
-    return {
-      total: reservations.length,
-      pending: reservations.filter(r => r.status === 'pending').length,
-      confirmed: reservations.filter(r => r.status === 'confirmed').length,
-      seated: reservations.filter(r => r.status === 'seated').length,
-      completed: reservations.filter(r => r.status === 'completed').length
-    };
-  };
-  
+
   // ========================================
   // 🎨 RENDU
   // ========================================
@@ -330,9 +353,7 @@ const ReservationsPage = () => {
   if (loading) {
     return <LoadingSpinner />;
   }
-  
-  const stats = getStats();
-  
+
   return (
     <div className="reservations-page">
       <div className="container is-fluid">
@@ -341,115 +362,155 @@ const ReservationsPage = () => {
           <div className="level-left">
             <div className="level-item">
               <div>
-                <h1 className="title is-4">Gestion des Réservations</h1>
+                <h1 className="title is-4">
+                  <CalendarDaysIcon className="h-6 w-6 mr-2" />
+                  Gestion des Réservations
+                </h1>
                 <p className="subtitle is-6">
-                  Planification et suivi des réservations
+                  Gérez les réservations de votre restaurant
                 </p>
               </div>
             </div>
           </div>
+          
           <div className="level-right">
             <div className="level-item">
-              <button 
-                className="button is-primary"
+              <Button
+                variant="primary"
+                leftIcon={PlusIcon}
                 onClick={handleAddReservation}
               >
-                <span className="icon">
-                  <PlusIcon className="h-5 w-5" />
-                </span>
-                <span>Nouvelle Réservation</span>
-              </button>
+                Nouvelle réservation
+              </Button>
             </div>
           </div>
         </div>
-        
-        {/* Filtres */}
-        <div className="box">
-          <div className="field is-grouped">
-            <div className="control">
-              <label className="label">Date</label>
-              <input 
-                className="input"
-                type="date"
-                value={filters.date}
-                onChange={(e) => setFilters({...filters, date: e.target.value})}
-              />
-            </div>
-            <div className="control">
-              <label className="label">Statut</label>
-              <div className="select">
-                <select 
-                  value={filters.status}
-                  onChange={(e) => setFilters({...filters, status: e.target.value})}
-                >
-                  <option value="">Tous les statuts</option>
-                  <option value="pending">En attente</option>
-                  <option value="confirmed">Confirmées</option>
-                  <option value="seated">Installées</option>
-                  <option value="completed">Terminées</option>
-                  <option value="cancelled">Annulées</option>
-                </select>
-              </div>
-            </div>
-            <div className="control">
-              <label className="label">Recherche</label>
-              <input 
-                className="input"
-                type="text"
-                placeholder="Nom, téléphone..."
-                value={filters.search}
-                onChange={(e) => setFilters({...filters, search: e.target.value})}
-              />
-            </div>
-          </div>
-        </div>
-        
-        {/* Statistiques */}
-        <div className="columns">
+
+        {/* Statistiques rapides */}
+        <div className="columns is-mobile">
           <div className="column">
-            <div className="box has-text-centered">
+            <div className="box has-text-centered stats-card">
               <p className="heading">Total</p>
               <p className="title is-5">{stats.total}</p>
             </div>
           </div>
           <div className="column">
-            <div className="box has-text-centered">
+            <div className="box has-text-centered stats-card">
               <p className="heading">En attente</p>
               <p className="title is-5 has-text-warning">{stats.pending}</p>
             </div>
           </div>
           <div className="column">
-            <div className="box has-text-centered">
+            <div className="box has-text-centered stats-card">
               <p className="heading">Confirmées</p>
               <p className="title is-5 has-text-success">{stats.confirmed}</p>
             </div>
           </div>
           <div className="column">
-            <div className="box has-text-centered">
+            <div className="box has-text-centered stats-card">
               <p className="heading">Installées</p>
               <p className="title is-5 has-text-info">{stats.seated}</p>
             </div>
           </div>
           <div className="column">
-            <div className="box has-text-centered">
-              <p className="heading">Terminées</p>
-              <p className="title is-5 has-text-primary">{stats.completed}</p>
+            <div className="box has-text-centered stats-card">
+              <p className="heading">Aujourd'hui</p>
+              <p className="title is-5 has-text-primary">{stats.today}</p>
             </div>
           </div>
         </div>
-        
-        {/* Table des réservations */}
-        <Table
-          columns={columns}
-          data={reservations}
-          loading={loading}
-          searchable
-          sortable
-          className="reservations-table"
-          emptyMessage="Aucune réservation trouvée"
-          onRowClick={handleViewReservation}
-        />
+
+        {/* Filtres */}
+        <div className="box">
+          <div className="columns">
+            <div className="column is-4">
+              <Input
+                placeholder="Rechercher par nom, email, téléphone..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                leftIcon={MagnifyingGlassIcon}
+                size="medium"
+              />
+            </div>
+            
+            <div className="column is-2">
+              <div className="field">
+                <div className="control">
+                  <div className="select is-fullwidth">
+                    <select
+                      value={statusFilter}
+                      onChange={handleStatusFilterChange}
+                    >
+                      <option value="">Tous les statuts</option>
+                      <option value={RESERVATION_STATUS.PENDING}>En attente</option>
+                      <option value={RESERVATION_STATUS.CONFIRMED}>Confirmées</option>
+                      <option value={RESERVATION_STATUS.SEATED}>Installées</option>
+                      <option value={RESERVATION_STATUS.COMPLETED}>Terminées</option>
+                      <option value={RESERVATION_STATUS.CANCELLED}>Annulées</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="column is-2">
+              <Input
+                type="date"
+                value={dateFilter}
+                onChange={handleDateFilterChange}
+                size="medium"
+              />
+            </div>
+            
+            <div className="column">
+              <Button
+                variant="outline"
+                leftIcon={FunnelIcon}
+                onClick={handleResetFilters}
+              >
+                Réinitialiser
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Tableau des réservations */}
+        <div className="box">
+          <Table
+            data={filteredReservations}
+            columns={tableColumns}
+            loading={loading}
+            pagination={{
+              current: pagination.page,
+              total: pagination.total,
+              pageSize: pagination.limit,
+              onChange: handlePageChange
+            }}
+            rowKey="_id"
+            emptyText="Aucune réservation trouvée"
+          />
+        </div>
       </div>
+
+      {/* Modal de détails */}
+      <ReservationDetailsModal
+        isOpen={isDetailsModalOpen}
+        onClose={closeDetailsModal}
+        reservation={selectedReservation}
+        onConfirm={handleConfirmReservation}
+        onCancel={handleCancelReservation}
+        onEdit={handleEditReservation}
+        loading={handlerLoading}
+      />
+
+      {/* Modal de création/édition */}
+      <ReservationFormModal
+        isOpen={isFormModalOpen || isEditModalOpen}
+        onClose={isEditModalOpen ? closeEditModal : closeFormModal}
+        onSubmit={isEditModalOpen ? handleUpdateReservation : handleCreateReservation}
+        reservation={isEditModalOpen ? selectedReservation : null}
+        loading={handlerLoading}
+      />
     </div>
   );
 };

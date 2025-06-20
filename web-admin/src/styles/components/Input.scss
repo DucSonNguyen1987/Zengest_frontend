@@ -1,0 +1,328 @@
+@import '../variables.css';
+
+// STYLES IMPUT REUTILISABLE
+
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  
+  // États du conteneur
+  &--focused {
+    .input-label {
+      color: var(--color-primary);
+    }
+  }
+  
+  &--error {
+    .input-label {
+      color: var(--color-danger);
+    }
+  }
+  
+  &--success {
+    .input-label {
+      color: var(--color-success);
+    }
+  }
+}
+
+// ========================================
+// 🏷️ LABEL
+// ========================================
+
+.input-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
+  margin-bottom: 0.25rem;
+  
+  &--required {
+    .input-label__required {
+      color: var(--color-danger);
+      margin-left: 0.25rem;
+    }
+  }
+}
+
+// ========================================
+// 📦 WRAPPER INPUT
+// ========================================
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+// ========================================
+// 🔤 CHAMP INPUT
+// ========================================
+
+.input-field {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all var(--transition-fast);
+  outline: none;
+  
+  // Placeholder
+  &::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1;
+  }
+  
+  // Focus
+  &:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(235, 47, 6, 0.1);
+  }
+  
+  // Hover
+  &:hover:not(:disabled):not(.input-field--error) {
+    border-color: var(--color-border-strong);
+  }
+  
+  // Disabled
+  &:disabled {
+    background-color: var(--color-background-secondary);
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  // ========================================
+  // 📏 TAILLES
+  // ========================================
+  
+  &--small {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    min-height: 2.25rem;
+    
+    &.input-field--with-left-icon {
+      padding-left: 2.25rem;
+    }
+    
+    &.input-field--with-right-icon {
+      padding-right: 2.25rem;
+    }
+  }
+  
+  &--medium {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    min-height: 2.75rem;
+    
+    &.input-field--with-left-icon {
+      padding-left: 2.75rem;
+    }
+    
+    &.input-field--with-right-icon {
+      padding-right: 2.75rem;
+    }
+  }
+  
+  &--large {
+    padding: 1rem 1.25rem;
+    font-size: 1.125rem;
+    min-height: 3.25rem;
+    
+    &.input-field--with-left-icon {
+      padding-left: 3.25rem;
+    }
+    
+    &.input-field--with-right-icon {
+      padding-right: 3.25rem;
+    }
+  }
+  
+  // ========================================
+  // 🎨 VARIANTS
+  // ========================================
+  
+  &--outlined {
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+  }
+  
+  &--filled {
+    border: 1px solid transparent;
+    background-color: var(--color-background-secondary);
+    
+    &:focus {
+      background-color: var(--color-surface);
+      border-color: var(--color-primary);
+    }
+  }
+  
+  &--underlined {
+    border: none;
+    border-bottom: 2px solid var(--color-border);
+    border-radius: 0;
+    background-color: transparent;
+    padding-left: 0;
+    padding-right: 0;
+    
+    &:focus {
+      border-bottom-color: var(--color-primary);
+      box-shadow: none;
+    }
+  }
+  
+  // ========================================
+  // 🎯 ÉTATS
+  // ========================================
+  
+  &--error {
+    border-color: var(--color-danger) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+    
+    &:focus {
+      border-color: var(--color-danger) !important;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+    }
+  }
+  
+  &--success {
+    border-color: var(--color-success);
+    
+    &:focus {
+      border-color: var(--color-success);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+  }
+  
+  &--focused {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(235, 47, 6, 0.1);
+  }
+}
+
+// Icones
+
+.iput-icon {
+    position: rabsolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    color: var(--color-text-muted);
+    z-index: 2;
+
+    &--left {
+        left: 0.75rem;
+    }
+
+    &--right {
+        right: 0.75rem;
+        pointer-events: auto;
+    }
+}
+
+// Bouton de mot de passe
+.input-password-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    padding: 0.25rem;
+    transition: all var(--transition-fast);
+
+    &:hover {
+        color: var(--color-text);
+        background-color: var(--color-background-secondary);
+    }
+
+    &:focus {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+    }
+}
+
+// Messages
+
+.input-message {
+    font-size: 0.875rem;
+    margin: 0;
+
+    &--error{
+        color: var(--color-danger);
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+
+    &--help {
+        color: var(--color-text-muted);
+    }
+
+    &--counter {
+        color: var(--color-text-muted);
+        text-align: right;
+        font-size: 0.75rem;
+    }
+}
+
+// Textarea spécifique
+textarea.input-field {
+    min-height: 6rem;
+    resize: vertical;
+    line-height: 1.5;
+    font-family: inherit;
+}
+
+// RESPONSIVE
+
+@media (max-width: 768px) {
+  .input-field {
+    &--small {
+      min-height: 2.5rem;
+      font-size: 1rem; // Évite le zoom sur iOS
+    }
+    
+    &--medium {
+      min-height: 3rem;
+      font-size: 1rem;
+    }
+    
+    &--large {
+      min-height: 3.5rem;
+      font-size: 1rem;
+    }
+  }
+}
+
+// Accessibilité
+
+  // Mode contraste élevé
+  @media (prefers-contrast: high) {
+    .input-field {
+        border-width :2px;
+
+        &:focus {
+            outline: 3px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+    }
+  }
+
+  // Mode mouvement réduit
+
+  @media(prefers-reduced-motion: reduce) {
+    .input-field {
+        transition: none;
+    }
+
+    .input-password-toggle {
+        transition: none;
+    }
+  }

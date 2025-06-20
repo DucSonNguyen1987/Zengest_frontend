@@ -121,3 +121,62 @@ export {
   selectFeaturedMenuItems,
   selectAvailableMenuItems
 } from './menuSlice';
+
+// Reservations
+
+export {
+  default as reservationReducer,
+  // Actions asynchrones
+  fetchReservations,
+  fetchReservationById,
+  createReservation,
+  updateReservation,
+  updateReservationStatus,
+  deleteReservation,
+  assignTableToReservation,
+  fetchTodayReservations,
+  fetchUpcomingReservations,
+  searchAvailableSlots,
+  // Actions synchrones
+  setFilters as setReservationFilters,
+  clearFilters as clearReservationFilters,
+  setSelectedDate,
+  setCurrentReservation,
+  clearCurrentReservation,
+  clearErrors as clearReservationErrors,
+  optimisticUpdateStatus,
+  optimisticDelete as optimisticDeleteReservation,
+  updateStats as updateReservationStats,
+  resetReservationState,
+  // Sélecteurs de base
+  selectReservations,
+  selectCurrentReservation,
+  selectTodayReservations,
+  selectUpcomingReservations,
+  // Sélecteurs de chargement
+  selectReservationsLoading,
+  selectReservationLoading,
+  selectTodayLoading,
+  selectUpcomingLoading,
+  // Sélecteurs d'erreurs
+  selectReservationsError,
+  selectReservationError,
+  selectTodayError,
+  selectUpcomingError,
+  // Sélecteurs de métadonnées
+  selectReservationsPagination,
+  selectReservationsFilters,
+  selectReservationsStats,
+  selectSelectedDate,
+  selectLastFetch as selectReservationsLastFetch,
+  // Sélecteurs composés
+  selectPendingReservations,
+  selectConfirmedReservations,
+  selectSeatedReservations,
+  selectActiveReservations,
+  selectReservationsByDate,
+  selectReservationById,
+  selectReservationsCount,
+  selectTodayReservationsCount,
+  selectUpcomingReservationsCount
+} from './reservationSlice';

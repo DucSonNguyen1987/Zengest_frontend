@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 
 // Styles
-import './Button.scss';
+import '@/styles/components/Button.scss';
 
 // ========================================
 // 🎯 COMPOSANT BUTTON

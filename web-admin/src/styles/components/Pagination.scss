@@ -1,0 +1,607 @@
+// ========================================
+// 📄 PAGINATION.SCSS - STYLES DU COMPOSANT PAGINATION
+// ========================================
+// Fichier: web-admin/src/components/common/Pagination/Pagination.scss
+//
+// Styles complets pour le composant Pagination avec support des variantes,
+// tailles, états et responsive design.
+
+// ========================================
+// 📝 IMPORTS ET VARIABLES
+// ========================================
+
+@import '../variables';
+
+// Variables locales spécifiques à la pagination
+$pagination-gap: 0.5rem;
+$pagination-button-gap: 0.25rem;
+$pagination-border-radius: var(--radius-medium);
+$pagination-transition: all var(--duration-normal) var(--easing-ease-in-out);
+
+// Couleurs spécifiques
+$pagination-bg: var(--background-primary);
+$pagination-border: var(--border-color);
+$pagination-text: var(--text-secondary);
+$pagination-text-muted: var(--text-light);
+
+// ========================================
+// 🎯 CLASSE DE BASE
+// ========================================
+
+.pagination {
+  // Layout de base
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 1rem 0;
+  
+  // Style de base
+  font-family: inherit;
+  background-color: transparent;
+  
+  // Transitions
+  transition: $pagination-transition;
+  
+  // Alignements
+  &.pagination--align-left {
+    justify-content: flex-start;
+  }
+  
+  &.pagination--align-right {
+    justify-content: flex-end;
+  }
+  
+  &.pagination--align-center {
+    justify-content: center;
+  }
+}
+
+// ========================================
+// 📦 CONTENEUR PRINCIPAL
+// ========================================
+
+.pagination__container {
+  display: flex;
+  align-items: center;
+  gap: $pagination-gap * 2;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 100%;
+  
+  // Mode compact
+  .pagination--compact & {
+    gap: $pagination-gap;
+    flex-wrap: nowrap;
+  }
+}
+
+// ========================================
+// 🧭 NAVIGATION PRINCIPALE
+// ========================================
+
+.pagination__navigation {
+  display: flex;
+  align-items: center;
+  gap: $pagination-gap;
+  flex: 1;
+  justify-content: center;
+  min-width: 0; // Permet la réduction
+}
+
+.pagination__nav-group {
+  display: flex;
+  align-items: center;
+  gap: $pagination-button-gap;
+}
+
+.pagination__pages {
+  display: flex;
+  align-items: center;
+  gap: $pagination-button-gap;
+  margin: 0 $pagination-gap;
+  
+  // Mode compact
+  .pagination--compact & {
+    margin: 0 $pagination-button-gap;
+  }
+}
+
+// ========================================
+// 🔘 BOUTONS DE PAGINATION
+// ========================================
+
+.pagination__page-button {
+  min-width: 2.5rem;
+  height: 2.5rem;
+  border-radius: $pagination-border-radius;
+  font-weight: 500;
+  transition: $pagination-transition;
+  
+  // État actif
+  &.pagination__page-button--active {
+    font-weight: 600;
+    box-shadow: var(--shadow-light);
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  // Tailles
+  .pagination--small & {
+    min-width: 2rem;
+    height: 2rem;
+    font-size: 0.875rem;
+  }
+  
+  .pagination--large & {
+    min-width: 3rem;
+    height: 3rem;
+    font-size: 1.125rem;
+  }
+}
+
+.pagination__nav-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .pagination--small & {
+    width: 2rem;
+    height: 2rem;
+    
+    svg {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+  
+  .pagination--large & {
+    width: 3rem;
+    height: 3rem;
+    
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+}
+
+// ========================================
+// ⋯ ELLIPSIS
+// ========================================
+
+.pagination__ellipsis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  color: $pagination-text-muted;
+  cursor: default;
+  user-select: none;
+  
+  .pagination--small & {
+    min-width: 2rem;
+    height: 2rem;
+  }
+  
+  .pagination--large & {
+    min-width: 3rem;
+    height: 3rem;
+  }
+}
+
+.pagination__ellipsis-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  opacity: 0.6;
+  
+  .pagination--small & {
+    width: 1rem;
+    height: 1rem;
+  }
+  
+  .pagination--large & {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+// ========================================
+// 📏 SÉLECTEUR DE TAILLE DE PAGE
+// ========================================
+
+.pagination__page-size {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: $pagination-text;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.pagination__page-size-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.pagination__page-size-select {
+  // Reset par défaut du select
+  appearance: none;
+  background: transparent;
+  border: 1px solid $pagination-border;
+  border-radius: var(--radius-small);
+  padding: 0.25rem 1.5rem 0.25rem 0.5rem;
+  font-size: inherit;
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: $pagination-transition;
+  
+  // Flèche personnalisée
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1rem;
+  
+  // États
+  &:hover {
+    border-color: var(--primary-color);
+    background-color: var(--background-secondary);
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// ========================================
+// ℹ️ INFORMATIONS DE PAGINATION
+// ========================================
+
+.pagination__info {
+  color: $pagination-text;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  
+  strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+  
+  // Version compacte
+  &.pagination__info--compact {
+    font-size: 0.8125rem;
+    margin: 0 0.5rem;
+    
+    .pagination--small & {
+      font-size: 0.75rem;
+    }
+  }
+}
+
+// ========================================
+// 🎨 VARIANTES
+// ========================================
+
+// Variante Simple
+.pagination--simple {
+  .pagination__simple {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: $pagination-gap;
+    
+    .pagination__controls {
+      display: flex;
+      align-items: center;
+      gap: $pagination-gap;
+    }
+  }
+}
+
+// Variante Minimale
+.pagination--minimal {
+  .pagination__minimal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $pagination-gap;
+  }
+}
+
+// Mode compact global
+.pagination--compact {
+  padding: 0.5rem 0;
+  
+  .pagination__page-size {
+    font-size: 0.8125rem;
+  }
+  
+  .pagination__info {
+    font-size: 0.8125rem;
+  }
+}
+
+// ========================================
+// 🔧 ÉTATS
+// ========================================
+
+// État désactivé
+.pagination--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+// État de chargement
+.pagination--loading {
+  .pagination__page-button,
+  .pagination__nav-button {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  
+  .pagination__page-size-select {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+}
+
+// ========================================
+// 📱 RESPONSIVE
+// ========================================
+
+@media (max-width: 768px) {
+  .pagination {
+    // Forcer le mode compact sur mobile
+    padding: 0.75rem 0;
+    
+    .pagination__container {
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    
+    .pagination__navigation {
+      order: 2;
+    }
+    
+    .pagination__page-size {
+      order: 1;
+      font-size: 0.8125rem;
+    }
+    
+    .pagination__info {
+      order: 3;
+      font-size: 0.8125rem;
+    }
+    
+    // Réduire le nombre de pages visibles
+    .pagination__pages {
+      gap: 0.125rem;
+    }
+    
+    .pagination__page-button {
+      min-width: 2.25rem;
+      height: 2.25rem;
+      font-size: 0.875rem;
+    }
+    
+    .pagination__nav-button {
+      width: 2.25rem;
+      height: 2.25rem;
+      
+      svg {
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+  }
+  
+  // Basculer vers la variante simple sur petits écrans
+  .pagination--default {
+    .pagination__container {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+    
+    .pagination__page-size {
+      order: 1;
+    }
+    
+    .pagination__navigation {
+      order: 2;
+      flex: none;
+    }
+    
+    .pagination__info {
+      order: 3;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .pagination {
+    // Mode très compact sur très petits écrans
+    .pagination__container {
+      gap: 0.5rem;
+    }
+    
+    .pagination__page-size {
+      display: none; // Masquer sur très petit écran
+    }
+    
+    .pagination__navigation {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .pagination__pages {
+      gap: 0.125rem;
+      margin: 0 0.25rem;
+    }
+    
+    // Masquer les boutons première/dernière sur très petit écran
+    .pagination__nav-group {
+      &:first-child .pagination__nav-button:first-child,
+      &:last-child .pagination__nav-button:last-child {
+        display: none;
+      }
+    }
+  }
+}
+
+// ========================================
+// 🌙 MODE SOMBRE
+// ========================================
+
+@media (prefers-color-scheme: dark) {
+  .pagination {
+    .pagination__page-size-select {
+      background-color: var(--background-secondary);
+      border-color: var(--border-dark);
+      color: var(--text-light);
+      
+      &:hover {
+        background-color: var(--background-tertiary);
+        border-color: var(--primary-color);
+      }
+      
+      &:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+      }
+    }
+    
+    .pagination__info {
+      color: var(--text-secondary);
+      
+      strong {
+        color: var(--text-primary);
+      }
+    }
+    
+    .pagination__ellipsis {
+      color: var(--text-light);
+    }
+  }
+}
+
+// ========================================
+// 🔍 FOCUS ET ACCESSIBILITÉ
+// ========================================
+
+.pagination {
+  // Améliorer l'accessibilité au clavier
+  .pagination__page-button,
+  .pagination__nav-button {
+    &:focus-visible {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+      z-index: 1;
+    }
+  }
+  
+  .pagination__page-size-select {
+    &:focus-visible {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+  }
+  
+  // Support des technologies d'assistance
+  [aria-current="page"] {
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border: 2px solid var(--primary-color);
+      border-radius: calc($pagination-border-radius + 2px);
+      pointer-events: none;
+    }
+  }
+}
+
+// ========================================
+// 🎯 UTILITÉS ET MODIFIEURS
+// ========================================
+
+// Pagination avec bordure
+.pagination--bordered {
+  .pagination__container {
+    border: 1px solid $pagination-border;
+    border-radius: var(--radius-large);
+    padding: 1rem;
+    background-color: $pagination-bg;
+  }
+}
+
+// Pagination avec ombre
+.pagination--shadow {
+  .pagination__container {
+    box-shadow: var(--shadow-light);
+    border-radius: var(--radius-large);
+    padding: 1rem;
+    background-color: $pagination-bg;
+  }
+}
+
+// Pagination sticky (collante)
+.pagination--sticky {
+  position: sticky;
+  bottom: 0;
+  background-color: rgba(var(--background-primary-rgb), 0.95);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border-light);
+  z-index: 10;
+}
+
+// ========================================
+// 🔧 DEBUG ET DÉVELOPPEMENT
+// ========================================
+
+@if $debug-mode {
+  .pagination {
+    // Afficher les informations de debug
+    &::before {
+      content: 'Pagination: ' attr(class);
+      position: absolute;
+      top: -1.5rem;
+      left: 0;
+      font-size: 0.625rem;
+      color: #999;
+      pointer-events: none;
+    }
+    
+    .pagination__container {
+      outline: 1px dashed rgba(255, 0, 0, 0.3);
+    }
+    
+    .pagination__navigation {
+      outline: 1px dashed rgba(0, 255, 0, 0.3);
+    }
+    
+    .pagination__pages {
+      outline: 1px dashed rgba(0, 0, 255, 0.3);
+    }
+  }
+}

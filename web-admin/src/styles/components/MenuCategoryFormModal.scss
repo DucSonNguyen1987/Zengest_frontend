@@ -1,0 +1,452 @@
+// web-admin/src/styles/components/MenuCategoryFormModal.scss
+@import '../_variables.scss';
+
+// ========================================
+// 🗂️ MODAL FORMULAIRE CATÉGORIE
+// ========================================
+
+.menu-category-form-modal {
+  background: var(--color-surface);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-2xl);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+  
+  @media (max-width: 768px) {
+    max-width: 95vw;
+    max-height: 95vh;
+    margin: 1rem;
+  }
+}
+
+// ========================================
+// 📄 EN-TÊTE MODAL
+// ========================================
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  padding: 0.5rem;
+  border-radius: var(--radius-small);
+  transition: all var(--transition-fast);
+  
+  &:hover:not(:disabled) {
+    color: var(--color-text);
+    background-color: var(--color-background-secondary);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ========================================
+// 📋 CONTENU MODAL
+// ========================================
+
+.modal-content {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+// ========================================
+// 📐 GRILLE DE FORMULAIRE
+// ========================================
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+// ========================================
+// 🏷️ LABELS DE FORMULAIRE
+// ========================================
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+  
+  svg {
+    color: var(--color-primary);
+    flex-shrink: 0;
+  }
+}
+
+// ========================================
+// ☑️ CHECKBOX GROUP
+// ========================================
+
+.checkbox-group {
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    background-color: var(--color-surface);
+    transition: all var(--transition-fast);
+    
+    &:hover {
+      border-color: var(--color-border-strong);
+      background-color: var(--color-surface-hover);
+    }
+    
+    input[type="checkbox"] {
+      display: none;
+    }
+    
+    .checkbox-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: var(--radius-small);
+      background-color: var(--color-background-secondary);
+      color: var(--color-text-muted);
+      transition: all var(--transition-fast);
+    }
+    
+    .checkbox-text {
+      font-weight: 500;
+      color: var(--color-text);
+    }
+    
+    // État coché
+    input[type="checkbox"]:checked + .checkbox-icon {
+      background-color: var(--color-success);
+      color: white;
+    }
+    
+    input[type="checkbox"]:not(:checked) + .checkbox-icon {
+      background-color: var(--color-danger);
+      color: white;
+    }
+  }
+}
+
+// ========================================
+// 🎨 SÉLECTEUR DE COULEUR
+// ========================================
+
+.color-selector {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: var(--color-background-secondary);
+  border-radius: var(--radius-medium);
+  
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.color-option {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 2px solid transparent;
+  border-radius: var(--radius-small);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  
+  &:hover:not(:disabled) {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-md);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  
+  &--selected {
+    border-color: var(--color-text);
+    box-shadow: var(--shadow-md);
+    
+    &::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-weight: bold;
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    }
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+}
+
+.color-picker {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-small);
+  cursor: pointer;
+  background: none;
+  
+  &:hover {
+    border-color: var(--color-border-strong);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ========================================
+// 📷 UPLOAD D'IMAGE
+// ========================================
+
+.image-upload {
+  position: relative;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-medium);
+  background-color: var(--color-background-secondary);
+  transition: all var(--transition-fast);
+  overflow: hidden;
+  
+  &:hover {
+    border-color: var(--color-border-strong);
+    background-color: var(--color-surface-hover);
+  }
+}
+
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  
+  svg {
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    margin: 0;
+    color: var(--color-text);
+    font-weight: 500;
+    
+    &.upload-hint {
+      font-size: 0.875rem;
+      color: var(--color-text-muted);
+      margin-top: 0.25rem;
+    }
+  }
+}
+
+.image-preview {
+  position: relative;
+  padding: 1rem;
+  
+  .preview-image {
+    width: 100%;
+    height: 8rem;
+    object-fit: cover;
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .remove-image {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background-color: var(--color-danger);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    
+    &:hover:not(:disabled) {
+      background-color: #dc2626;
+      transform: scale(1.1);
+    }
+    
+    &:focus {
+      outline: 2px solid white;
+      outline-offset: 2px;
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+  }
+}
+
+.file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+// ========================================
+// ❌ MESSAGES D'ERREUR
+// ========================================
+
+.error-message {
+  color: var(--color-danger);
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0 0;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+// ========================================
+// 🦶 FOOTER MODAL
+// ========================================
+
+.modal-footer {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-background-secondary);
+  border-radius: 0 0 var(--radius-large) var(--radius-large);
+  flex-shrink: 0;
+  
+  @media (max-width: 768px) {
+    justify-content: stretch;
+    
+    .button {
+      flex: 1;
+    }
+  }
+}
+
+// ========================================
+// 🎬 ANIMATIONS
+// ========================================
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(2rem) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// ========================================
+// ♿ ACCESSIBILITÉ
+// ========================================
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-category-form-modal,
+  .color-option {
+    animation: none;
+    transition: none;
+  }
+  
+  .color-option:hover,
+  .remove-image:hover {
+    transform: none !important;
+  }
+}
+
+// Mode contraste élevé
+@media (prefers-contrast: high) {
+  .color-option {
+    border-width: 3px;
+    
+    &--selected {
+      border-width: 4px;
+    }
+  }
+  
+  .checkbox-label {
+    border-width: 2px;
+  }
+  
+  .image-upload {
+    border-width: 3px;
+  }
+}

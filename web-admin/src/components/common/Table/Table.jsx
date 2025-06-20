@@ -20,10 +20,10 @@ import LoadingSpinner from '../Loading/LoadingSpinner';
 import { useDebounce } from '@/hooks/ui/useDebounce';
 
 // Utilitaires
-import { formatDate, formatCurrency, formatNumber } from '../../../../shared/utils/formatters';
+import { formatDate, formatCurrency, formatNumber } from '../../../utils/formatters/formatters';
 
 // Styles
-import './Table.scss';
+import '@/styles/components/Table.scss';
 
 // ========================================
 // 🎯 COMPOSANT TABLE PRINCIPAL

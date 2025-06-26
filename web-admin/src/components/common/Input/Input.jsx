@@ -1,7 +1,7 @@
 import React, { forwardRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { EyeIcon, EyeSlashIcon, ExclamationCitrcleIcon } from '@heroicons/react/24/outline';
-import '@/styles/components/Input.scss'; 
+import { EyeIcon, EyeSlashIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
+// import '@/styles/components/Input.scss'; 
 
 
 //  Composant Input Réutilisable
@@ -78,7 +78,7 @@ const Input = forwardRef(({
 
     const inputProps = {
         ref,
-        type : 'password' ? (showPassword ? 'text' : 'password') :
+        type: 'password' ? (showPassword ? 'text' : 'password') :
             value,
         onChange,
         onFocus: handleFocus,
@@ -125,7 +125,7 @@ const Input = forwardRef(({
                 {/* Icone de gauche */}
                 {LeftIcon && (
                     <div className='input-icon input-icon--left'>
-                        <leftIcon className='h-5 w-5' />
+                        <LeftIcon className='h-5 w-5' />
                     </div>
                 )}
 

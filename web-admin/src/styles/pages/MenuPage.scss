@@ -1,0 +1,549 @@
+// ========================================
+// 🍽️ MENUPAGE.SCSS - STYLES DE LA PAGE GESTION MENU
+// ========================================
+// Fichier: web-admin/src/pages/Menu/MenuPage.scss
+//
+// Styles complets pour la page de gestion du menu avec support des
+// filtres, table, modals et responsive design.
+
+// ========================================
+// 📝 IMPORTS ET VARIABLES
+// ========================================
+
+@import '@styles/variables.scss';
+
+// Variables locales spécifiques à la page menu
+$menu-card-radius: var(--radius-large);
+$menu-transition: all var(--duration-normal) var(--easing-ease-in-out);
+$menu-hover-transform: translateY(-2px);
+
+// Couleurs spécifiques
+$menu-primary: var(--primary-color);
+$menu-success: var(--success-color);
+$menu-warning: var(--warning-color);
+$menu-danger: var(--danger-color);
+$menu-info: var(--info-color);
+
+// ========================================
+// 🎯 CLASSE PRINCIPALE
+// ========================================
+
+.menu-page {
+  padding: 1rem;
+  min-height: 100vh;
+  background-color: var(--background-primary);
+
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+  }
+}
+
+// ========================================
+// 📊 CARTES DE STATISTIQUES
+// ========================================
+
+.stats-card {
+  transition: $menu-transition;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  
+  &:hover {
+    transform: $menu-hover-transform;
+    box-shadow: var(--shadow-medium);
+    border-color: var(--border-strong);
+  }
+  
+  // Barre décorative en haut
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $menu-primary, var(--accent-color));
+    opacity: 0;
+    transition: opacity var(--duration-fast);
+  }
+  
+  &:hover::before {
+    opacity: 1;
+  }
+  
+  .heading {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .title {
+    color: var(--text-primary);
+    font-weight: 700;
+    margin: 0;
+    font-size: 2rem;
+    line-height: 1;
+    
+    // Variantes de couleurs
+    &.has-text-primary { color: $menu-primary !important; }
+    &.has-text-success { color: $menu-success !important; }
+    &.has-text-warning { color: $menu-warning !important; }
+    &.has-text-danger { color: $menu-danger !important; }
+    &.has-text-info { color: $menu-info !important; }
+  }
+  
+  .help {
+    font-size: 0.8125rem;
+    margin-top: 0.25rem;
+    opacity: 0.8;
+  }
+}
+
+// ========================================
+// 🔍 SECTION FILTRES
+// ========================================
+
+.filters-section {
+  margin-bottom: 2rem;
+  
+  .box {
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: $menu-card-radius;
+    background: var(--background-secondary);
+    position: relative;
+    
+    // Effet de profondeur
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, transparent, rgba(255,255,255,0.1), transparent);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      pointer-events: none;
+    }
+  }
+  
+  .columns {
+    margin-bottom: 0;
+    align-items: flex-end;
+  }
+  
+  .field-group {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+}
+
+// ========================================
+// 🍽️ IMAGE D'ARTICLE MENU
+// ========================================
+
+.menu-item-image {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-medium);
+  overflow: hidden;
+  position: relative;
+  background: var(--background-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--duration-fast);
+  }
+  
+  &:hover img {
+    transform: scale(1.05);
+  }
+  
+  // Image par défaut
+  &.no-image {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-align: center;
+    background: linear-gradient(135deg, var(--background-secondary), var(--background-tertiary));
+    
+    &::before {
+      content: '🍽️';
+      font-size: 1.5rem;
+      display: block;
+    }
+  }
+}
+
+// ========================================
+// 🏷️ BADGE DE PRIX
+// ========================================
+
+.price-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background: linear-gradient(135deg, $menu-success, var(--success-dark));
+  color: white;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 0.875rem;
+  box-shadow: var(--shadow-small);
+  
+  // Animation subtile
+  transition: all var(--duration-fast);
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-medium);
+  }
+}
+
+// ========================================
+// ⭐ BADGE DE NOTE
+// ========================================
+
+.rating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--background-tertiary);
+  border-radius: var(--radius-medium);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  
+  .star-icon {
+    width: 14px;
+    height: 14px;
+    color: #fbbf24; // Jaune étoile
+  }
+  
+  // Variations selon la note
+  &.rating-excellent {
+    background: rgba($menu-success, 0.1);
+    color: $menu-success;
+  }
+  
+  &.rating-good {
+    background: rgba($menu-info, 0.1);
+    color: $menu-info;
+  }
+  
+  &.rating-average {
+    background: rgba($menu-warning, 0.1);
+    color: $menu-warning;
+  }
+  
+  &.rating-poor {
+    background: rgba($menu-danger, 0.1);
+    color: $menu-danger;
+  }
+}
+
+// ========================================
+// 📑 ACTIONS DE TABLE
+// ========================================
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  .button {
+    padding: 0.375rem;
+    min-width: auto;
+    border-radius: var(--radius-small);
+    transition: all var(--duration-fast);
+    
+    &.is-small {
+      font-size: 0.75rem;
+      
+      .icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
+    
+    // Variantes d'actions
+    &.action-view {
+      background: rgba($menu-info, 0.1);
+      color: $menu-info;
+      border-color: rgba($menu-info, 0.2);
+      
+      &:hover {
+        background: $menu-info;
+        color: white;
+        border-color: $menu-info;
+      }
+    }
+    
+    &.action-edit {
+      background: rgba($menu-warning, 0.1);
+      color: $menu-warning;
+      border-color: rgba($menu-warning, 0.2);
+      
+      &:hover {
+        background: $menu-warning;
+        color: white;
+        border-color: $menu-warning;
+      }
+    }
+    
+    &.action-delete {
+      background: rgba($menu-danger, 0.1);
+      color: $menu-danger;
+      border-color: rgba($menu-danger, 0.2);
+      
+      &:hover {
+        background: $menu-danger;
+        color: white;
+        border-color: $menu-danger;
+      }
+    }
+  }
+}
+
+// ========================================
+// 📋 DESCRIPTION TRONQUÉE
+// ========================================
+
+.description-cell {
+  max-width: 300px;
+  
+  .description-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+  }
+  
+  .description-full {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+  
+  .show-more-btn {
+    background: none;
+    border: none;
+    color: $menu-primary;
+    font-size: 0.8125rem;
+    padding: 0;
+    margin-top: 0.25rem;
+    cursor: pointer;
+    text-decoration: underline;
+    
+    &:hover {
+      color: var(--primary-dark);
+    }
+  }
+}
+
+// ========================================
+// 🎯 ÉTATS ET BADGES
+// ========================================
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  
+  // États disponibles
+  &.status-available {
+    background: rgba($menu-success, 0.1);
+    color: $menu-success;
+    border: 1px solid rgba($menu-success, 0.2);
+  }
+  
+  &.status-unavailable {
+    background: rgba($menu-danger, 0.1);
+    color: $menu-danger;
+    border: 1px solid rgba($menu-danger, 0.2);
+  }
+  
+  &.status-limited {
+    background: rgba($menu-warning, 0.1);
+    color: $menu-warning;
+    border: 1px solid rgba($menu-warning, 0.2);
+  }
+  
+  &.status-new {
+    background: rgba($menu-info, 0.1);
+    color: $menu-info;
+    border: 1px solid rgba($menu-info, 0.2);
+    
+    &::before {
+      content: '✨';
+      margin-right: 0.25rem;
+    }
+  }
+  
+  &.status-featured {
+    background: linear-gradient(135deg, $menu-primary, var(--primary-dark));
+    color: white;
+    border: 1px solid $menu-primary;
+    
+    &::before {
+      content: '⭐';
+      margin-right: 0.25rem;
+    }
+  }
+}
+
+// ========================================
+// 📱 RESPONSIVE DESIGN
+// ========================================
+
+@media (max-width: 768px) {
+  .menu-page {
+    .stats-card {
+      .title {
+        font-size: 1.5rem;
+      }
+    }
+    
+    .filters-section {
+      .box {
+        padding: 1rem;
+      }
+    }
+    
+    .table-actions {
+      flex-direction: column;
+      gap: 0.25rem;
+      
+      .button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+    
+    .menu-item-image {
+      width: 50px;
+      height: 50px;
+    }
+    
+    .description-cell {
+      max-width: 200px;
+    }
+  }
+}
+
+// ========================================
+// 💫 ANIMATIONS ET TRANSITIONS
+// ========================================
+
+// Animation de chargement pour les cartes
+@keyframes pulse-card {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.loading-card {
+  animation: pulse-card 2s ease-in-out infinite;
+}
+
+// Animation d'apparition des éléments
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fade-in-up 0.6s ease-out;
+}
+
+// Effet de survol pour les actions
+.table-actions .button {
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+  }
+  
+  &:hover::before {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+// ========================================
+// 🔧 UTILITAIRES SPÉCIFIQUES
+// ========================================
+
+.menu-page {
+  // Classe pour masquer les éléments sur mobile
+  .hide-mobile {
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+  
+  // Classe pour afficher uniquement sur mobile
+  .show-mobile {
+    display: none;
+    
+    @media (max-width: 768px) {
+      display: block;
+    }
+  }
+  
+  // Espacement personnalisé
+  .spacing-large {
+    margin-bottom: 2rem;
+  }
+  
+  .spacing-medium {
+    margin-bottom: 1.5rem;
+  }
+  
+  .spacing-small {
+    margin-bottom: 1rem;
+  }
+}

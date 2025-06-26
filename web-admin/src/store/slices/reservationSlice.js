@@ -12,7 +12,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { reservationService } from '@/services/api/reservationService';
 
 // Constantes
-import { RESERVATION_STATUS } from '../../../../shared/constants/constants';
+import { RESERVATION_STATUS } from '@shared/constants/constants';
 
 // ========================================
 // 🔧 CONFIGURATION API

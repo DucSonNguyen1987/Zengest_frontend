@@ -45,7 +45,7 @@ export {
   formatGuestCount,
   formatTableNumber,
   formatOrderNumber
-} from './formatters/formatters';
+} from '@shared/utils/formatters';
 
 // ========================================
 // 📋 CONSTANTES
@@ -62,13 +62,13 @@ export {
   PAGINATION_SIZES,
   NOTIFICATION_TYPES,
   NOTIFICATION_DURATIONS
-} from '../../../frontend/shared/constants'; // Chemin temporaire
+} from '@shared/constants'; // Chemin temporaire
 
 // ========================================
 // 📦 IMPORT PAR DÉFAUT GROUPÉ
 // ========================================
 import * as helpers from './helpers/helpers';
-import * as formatters from './formatters/formatters';
+import * as formatters from '@shared/utils/formatters';
 
 export const utils = {
   ...helpers,

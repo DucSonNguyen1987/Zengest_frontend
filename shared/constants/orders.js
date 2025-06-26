@@ -13,29 +13,62 @@ export const ORDER_STATUS = {
 
 export const ORDER_STATUS_LIST = Object.values(ORDER_STATUS);
 
-// === TRANSITIONS AUTORISÉES ===
+// === STATUTS ACTIFS (commandes en cours) ===
+export const ACTIVE_ORDER_STATUSES = [
+  ORDER_STATUS.PENDING,
+  ORDER_STATUS.CONFIRMED,
+  ORDER_STATUS.PREPARING,
+  ORDER_STATUS.READY
+];
+
+// === STATUTS FINAUX (commandes terminées) ===
+export const FINAL_ORDER_STATUSES = [
+  ORDER_STATUS.PAID,
+  ORDER_STATUS.CANCELLED
+];
+
+// === TRANSITIONS DE STATUTS AUTORISÉES ===
 export const ORDER_STATUS_TRANSITIONS = {
-  [ORDER_STATUS.PENDING]: [
-    ORDER_STATUS.CONFIRMED,
-    ORDER_STATUS.CANCELLED
-  ],
-  [ORDER_STATUS.CONFIRMED]: [
-    ORDER_STATUS.PREPARING,
-    ORDER_STATUS.CANCELLED
-  ],
-  [ORDER_STATUS.PREPARING]: [
-    ORDER_STATUS.READY,
-    ORDER_STATUS.CANCELLED
-  ],
-  [ORDER_STATUS.READY]: [
-    ORDER_STATUS.SERVED
-  ],
-  [ORDER_STATUS.SERVED]: [
-    ORDER_STATUS.PAID
-  ],
-  [ORDER_STATUS.PAID]: [],
-  [ORDER_STATUS.CANCELLED]: []
+  [ORDER_STATUS.PENDING]: [ORDER_STATUS.CONFIRMED, ORDER_STATUS.CANCELLED],
+  [ORDER_STATUS.CONFIRMED]: [ORDER_STATUS.PREPARING, ORDER_STATUS.CANCELLED],
+  [ORDER_STATUS.PREPARING]: [ORDER_STATUS.READY, ORDER_STATUS.CANCELLED],
+  [ORDER_STATUS.READY]: [ORDER_STATUS.SERVED, ORDER_STATUS.CANCELLED],
+  [ORDER_STATUS.SERVED]: [ORDER_STATUS.PAID],
+  [ORDER_STATUS.PAID]: [], // État final
+  [ORDER_STATUS.CANCELLED]: [] // État final
 };
+
+// === TYPES DE COMMANDES ===
+export const ORDER_TYPES = {
+  DINE_IN: 'dine_in',
+  TAKEAWAY: 'takeaway',
+  DELIVERY: 'delivery',
+  CATERING: 'catering'
+};
+
+export const ORDER_TYPES_LIST = Object.values(ORDER_TYPES);
+
+// === MÉTHODES DE PAIEMENT ===
+export const PAYMENT_METHODS = {
+  CASH: 'cash',
+  CARD: 'card',
+  MOBILE: 'mobile',
+  VOUCHER: 'voucher',
+  SPLIT: 'split'
+};
+
+export const PAYMENT_METHODS_LIST = Object.values(PAYMENT_METHODS);
+
+// === STATUTS DE PAIEMENT ===
+export const PAYMENT_STATUS = {
+  PENDING: 'pending',
+  PROCESSING: 'processing',
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+  REFUNDED: 'refunded'
+};
+
+export const PAYMENT_STATUS_LIST = Object.values(PAYMENT_STATUS);
 
 // === LABELS DES STATUTS ===
 export const ORDER_STATUS_LABELS = {
@@ -54,52 +87,29 @@ export const ORDER_STATUS_COLORS = {
   [ORDER_STATUS.CONFIRMED]: 'info',
   [ORDER_STATUS.PREPARING]: 'primary',
   [ORDER_STATUS.READY]: 'success',
-  [ORDER_STATUS.SERVED]: 'dark',
+  [ORDER_STATUS.SERVED]: 'success',
   [ORDER_STATUS.PAID]: 'success',
   [ORDER_STATUS.CANCELLED]: 'danger'
 };
 
-// === TYPES DE COMMANDES ===
-export const ORDER_TYPES = {
-  DINE_IN: 'dine_in',
-  TAKEAWAY: 'takeaway',
-  DELIVERY: 'delivery'
+// === FONCTIONS UTILITAIRES ===
+export const isActiveOrderStatus = (status) => {
+  return ACTIVE_ORDER_STATUSES.includes(status);
 };
 
-export const ORDER_TYPES_LIST = Object.values(ORDER_TYPES);
-
-// === LABELS DES TYPES ===
-export const ORDER_TYPE_LABELS = {
-  [ORDER_TYPES.DINE_IN]: 'Sur place',
-  [ORDER_TYPES.TAKEAWAY]: 'À emporter',
-  [ORDER_TYPES.DELIVERY]: 'Livraison'
+export const isValidStatusTransition = (fromStatus, toStatus) => {
+  const allowedTransitions = ORDER_STATUS_TRANSITIONS[fromStatus] || [];
+  return allowedTransitions.includes(toStatus);
 };
 
-// === PRIORITÉS ===
-export const ORDER_PRIORITIES = {
-  LOW: 'low',
-  NORMAL: 'normal',
-  HIGH: 'high',
-  URGENT: 'urgent'
+export const getNextStatuses = (currentStatus) => {
+  return ORDER_STATUS_TRANSITIONS[currentStatus] || [];
 };
 
-export const ORDER_PRIORITIES_LIST = Object.values(ORDER_PRIORITIES);
-
-// === MODES DE PAIEMENT ===
-export const PAYMENT_METHODS = {
-  CASH: 'cash',
-  CARD: 'card',
-  SPLIT: 'split',
-  VOUCHER: 'voucher'
-};
-
-export const PAYMENT_METHODS_LIST = Object.values(PAYMENT_METHODS);
-
-// === TEMPS D'ATTENTE PAR DÉFAUT (en minutes) ===
-export const DEFAULT_PREPARATION_TIMES = {
-  STARTER: 10,
-  MAIN: 20,
-  DESSERT: 8,
-  DRINK: 2,
-  COCKTAIL: 5
+export const canCancelOrder = (status) => {
+  return [
+    ORDER_STATUS.PENDING,
+    ORDER_STATUS.CONFIRMED,
+    ORDER_STATUS.PREPARING
+  ].includes(status);
 };

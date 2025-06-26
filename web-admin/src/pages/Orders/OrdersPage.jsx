@@ -47,10 +47,10 @@ import { usePermissions } from '@/hooks/auth/usePermissions';
 
 // Utilitaires
 import { formatCurrency, formatDateTime, formatTimeAgo } from '../../../shared/utils/formatters';
-import { hasPermission } from '@/utils/permissions';
+import { hasPermission } from '@shared/constants/permissions';
 
 // Constantes
-import { ORDER_STATUS, ORDER_STATUS_TRANSITIONS } from '@/utils/constants';
+import { ORDER_STATUS, ORDER_STATUS_TRANSITIONS } from '@shared/utils/constants';
 
 // Styles
 import './OrdersPage.scss';

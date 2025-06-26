@@ -1,5 +1,4 @@
-// web-admin/src/components/common/index.js
-// Export centralisé des composants communs - VERSION MISE À JOUR
+// web-admin/src/components/common/index.js - VERSION CORRIGÉE
 
 // ========================================
 // 📝 FORMULAIRES ET INPUTS
@@ -9,8 +8,15 @@ export { default as Input } from './Input/Input';
 // ========================================
 // ⏳ LOADING ET ÉTATS
 // ========================================
+// Import du composant LoadingSpinner
+import LoadingSpinnerComponent from './Loading/LoadingSpinner';
+
+// Re-export avec le bon nom
+export const LoadingSpinner = LoadingSpinnerComponent;
+export { default as LoadingSpinnerDefault } from './Loading/LoadingSpinner';
+
+// Export des autres variantes aussi
 export { 
-  default as LoadingSpinner, 
   PageLoader, 
   InlineSpinner 
 } from './Loading/LoadingSpinner';
@@ -35,28 +41,3 @@ export { default as Table } from './Table/Table';
 // 🔘 BOUTONS ET INTERACTIONS
 // ========================================
 export { default as Button } from './Button/Button';
-
-// ========================================
-// 🔮 COMPOSANTS À CRÉER PROCHAINEMENT
-// ========================================
-
-// DataTable (pour les listes avancées)
-// export { default as DataTable } from './DataTable/DataTable';
-
-// Pagination
-// export { default as Pagination } from './Pagination/Pagination';
-
-// ErrorBoundary
-// export { default as ErrorBoundary } from './ErrorBoundary/ErrorBoundary';
-
-// Charts
-// export { 
-//   LineChart, 
-//   BarChart, 
-//   PieChart 
-// } from './Charts';
-
-// Composants de layout
-// export { default as Header } from './Layout/Header/Header';
-// export { default as Sidebar } from './Layout/Sidebar/Sidebar';
-// export { default as Footer } from './Layout/Footer/Footer';

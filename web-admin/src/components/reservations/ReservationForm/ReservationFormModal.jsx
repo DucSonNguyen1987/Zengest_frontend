@@ -8,7 +8,7 @@ import {
   UserGroupIcon,
   PhoneIcon,
   EnvelopeIcon,
-  ChatBubbleLeftEllipsisIcon,
+  ChatBubbleLeftIcon,
   TableCellsIcon,
   UserIcon
 } from '@heroicons/react/24/outline';
@@ -26,7 +26,7 @@ import {
 import { RESERVATION_STATUS } from '@/utils';
 
 // Styles
-import '../../../styles/components/ReservationFormModal.scss';
+//import '@styles/components/ReservationFormModal.scss';
 
 // ========================================
 // 📋 MODAL FORMULAIRE RÉSERVATION
@@ -433,7 +433,7 @@ const ReservationFormModal = ({
             {/* Section Notes */}
             <div className="form-section">
               <h3 className="section-title">
-                <ChatBubbleLeftEllipsisIcon className="h-5 w-5" />
+                <ChatBubbleLeftIcon className="h-5 w-5" />
                 Notes et demandes
               </h3>
               

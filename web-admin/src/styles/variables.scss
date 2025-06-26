@@ -1,16 +1,423 @@
-// Variables SCSS personnalisées
+// Variables SCSS pour Web Admin Zengest
 
-// Couleurs principales
-$primary: #3273dc;
-$success: #48c774;
-$warning: #ffdd57;
-$danger: #f14668;
-$dark: #363636;
-$light: #f5f5f5;
+// ========================================
+// 🎨 COULEURS PRINCIPALES
+// ========================================
 
-// Tailles
-$border-radius: 6px;
-$box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1);
+// Couleurs de marque
+$primary-color: #eb2f06;
+$secondary-color: #00d2d3;
+$accent-color: #ff6348;
 
-// Typography
-$family-sans-serif: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+// Nuances de la couleur primaire
+$primary-50: #fef2f2;
+$primary-100: #fee2e2;
+$primary-200: #fecaca;
+$primary-300: #fca5a5;
+$primary-400: #f87171;
+$primary-500: #eb2f06;
+$primary-600: #dc2626;
+$primary-700: #b91c1c;
+$primary-800: #991b1b;
+$primary-900: #7f1d1d;
+
+// Couleurs de statut
+$success-color: #10b981;
+$warning-color: #f59e0b;
+$danger-color: #ef4444;
+$info-color: #3b82f6;
+
+// Nuances de gris
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+$gray-900: #111827;
+
+// Couleurs système
+$white: #ffffff;
+$black: #000000;
+
+// ========================================
+// 🌙 THÈMES COULEURS
+// ========================================
+
+// Variables CSS personnalisées pour le thème
+:root {
+  // Couleurs principales
+  --color-primary: #{$primary-color};
+  --color-secondary: #{$secondary-color};
+  --color-accent: #{$accent-color};
+  
+  // Couleurs de statut
+  --color-success: #{$success-color};
+  --color-warning: #{$warning-color};
+  --color-danger: #{$danger-color};
+  --color-info: #{$info-color};
+  
+  // Mode clair (par défaut)
+  --color-background: #{$white};
+  --color-background-secondary: #{$gray-50};
+  --color-background-tertiary: #{$gray-100};
+  
+  --color-surface: #{$white};
+  --color-surface-hover: #{$gray-50};
+  --color-surface-active: #{$gray-100};
+  
+  --color-text: #{$gray-900};
+  --color-text-secondary: #{$gray-700};
+  --color-text-muted: #{$gray-500};
+  --color-text-inverse: #{$white};
+  
+  --color-border: #{$gray-200};
+  --color-border-light: #{$gray-100};
+  --color-border-strong: #{$gray-300};
+  
+  // Ombres
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  
+  // Overlay
+  --overlay-backdrop: rgba(0, 0, 0, 0.5);
+}
+
+// Mode sombre
+[data-theme="dark"] {
+  --color-background: #{$gray-900};
+  --color-background-secondary: #{$gray-800};
+  --color-background-tertiary: #{$gray-700};
+  
+  --color-surface: #{$gray-800};
+  --color-surface-hover: #{$gray-700};
+  --color-surface-active: #{$gray-600};
+  
+  --color-text: #{$gray-100};
+  --color-text-secondary: #{$gray-300};
+  --color-text-muted: #{$gray-400};
+  --color-text-inverse: #{$gray-900};
+  
+  --color-border: #{$gray-600};
+  --color-border-light: #{$gray-700};
+  --color-border-strong: #{$gray-500};
+  
+  // Ombres adaptées au mode sombre
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  
+  --overlay-backdrop: rgba(0, 0, 0, 0.7);
+}
+
+// ========================================
+// 📝 TYPOGRAPHIE
+// ========================================
+
+// Familles de polices
+$font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+$font-family-secondary: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$font-family-mono: 'JetBrains Mono', 'Fira Code', Consolas, 'Liberation Mono', monospace;
+
+// Variables CSS pour les polices
+:root {
+  --font-family-primary: #{$font-family-primary};
+  --font-family-secondary: #{$font-family-secondary};
+  --font-family-mono: #{$font-family-mono};
+}
+
+// Tailles de police
+$font-sizes: (
+  'xs': 0.75rem,    // 12px
+  'sm': 0.875rem,   // 14px
+  'base': 1rem,     // 16px
+  'lg': 1.125rem,   // 18px
+  'xl': 1.25rem,    // 20px
+  '2xl': 1.5rem,    // 24px
+  '3xl': 1.875rem,  // 30px
+  '4xl': 2.25rem,   // 36px
+  '5xl': 3rem,      // 48px
+  '6xl': 3.75rem,   // 60px
+  '7xl': 4.5rem,    // 72px
+  '8xl': 6rem,      // 96px
+  '9xl': 8rem       // 128px
+);
+
+// Poids de police
+$font-weights: (
+  'thin': 100,
+  'extralight': 200,
+  'light': 300,
+  'normal': 400,
+  'medium': 500,
+  'semibold': 600,
+  'bold': 700,
+  'extrabold': 800,
+  'black': 900
+);
+
+// Hauteur de ligne
+$line-heights: (
+  'none': 1,
+  'tight': 1.25,
+  'snug': 1.375,
+  'normal': 1.5,
+  'relaxed': 1.625,
+  'loose': 2
+);
+
+// Variables CSS pour la typographie
+:root {
+  --font-size-xs: #{map-get($font-sizes, 'xs')};
+  --font-size-sm: #{map-get($font-sizes, 'sm')};
+  --font-size-base: #{map-get($font-sizes, 'base')};
+  --font-size-lg: #{map-get($font-sizes, 'lg')};
+  --font-size-xl: #{map-get($font-sizes, 'xl')};
+  --font-size-2xl: #{map-get($font-sizes, '2xl')};
+  --font-size-3xl: #{map-get($font-sizes, '3xl')};
+  --font-size-4xl: #{map-get($font-sizes, '4xl')};
+  
+  --font-weight-normal: #{map-get($font-weights, 'normal')};
+  --font-weight-medium: #{map-get($font-weights, 'medium')};
+  --font-weight-semibold: #{map-get($font-weights, 'semibold')};
+  --font-weight-bold: #{map-get($font-weights, 'bold')};
+  
+  --line-height-tight: #{map-get($line-heights, 'tight')};
+  --line-height-normal: #{map-get($line-heights, 'normal')};
+  --line-height-relaxed: #{map-get($line-heights, 'relaxed')};
+}
+
+// ========================================
+// 📏 ESPACEMENTS
+// ========================================
+
+// Échelle d'espacement
+$spacing: (
+  '0': 0,
+  '1': 0.25rem,   // 4px
+  '2': 0.5rem,    // 8px
+  '3': 0.75rem,   // 12px
+  '4': 1rem,      // 16px
+  '5': 1.25rem,   // 20px
+  '6': 1.5rem,    // 24px
+  '7': 1.75rem,   // 28px
+  '8': 2rem,      // 32px
+  '9': 2.25rem,   // 36px
+  '10': 2.5rem,   // 40px
+  '11': 2.75rem,  // 44px
+  '12': 3rem,     // 48px
+  '14': 3.5rem,   // 56px
+  '16': 4rem,     // 64px
+  '20': 5rem,     // 80px
+  '24': 6rem,     // 96px
+  '28': 7rem,     // 112px
+  '32': 8rem,     // 128px
+  '36': 9rem,     // 144px
+  '40': 10rem,    // 160px
+  '44': 11rem,    // 176px
+  '48': 12rem,    // 192px
+  '52': 13rem,    // 208px
+  '56': 14rem,    // 224px
+  '60': 15rem,    // 240px
+  '64': 16rem,    // 256px
+  '72': 18rem,    // 288px
+  '80': 20rem,    // 320px
+  '96': 24rem     // 384px
+);
+
+// Variables CSS pour l'espacement
+:root {
+  --spacing-1: #{map-get($spacing, '1')};
+  --spacing-2: #{map-get($spacing, '2')};
+  --spacing-3: #{map-get($spacing, '3')};
+  --spacing-4: #{map-get($spacing, '4')};
+  --spacing-5: #{map-get($spacing, '5')};
+  --spacing-6: #{map-get($spacing, '6')};
+  --spacing-8: #{map-get($spacing, '8')};
+  --spacing-10: #{map-get($spacing, '10')};
+  --spacing-12: #{map-get($spacing, '12')};
+  --spacing-16: #{map-get($spacing, '16')};
+  --spacing-20: #{map-get($spacing, '20')};
+  --spacing-24: #{map-get($spacing, '24')};
+}
+
+// ========================================
+// 🔲 BORDURES ET RAYONS
+// ========================================
+
+// Rayons de bordure
+$border-radius: (
+  'none': 0,
+  'sm': 0.125rem,   // 2px
+  'md': 0.375rem,   // 6px
+  'lg': 0.5rem,     // 8px
+  'xl': 0.75rem,    // 12px
+  '2xl': 1rem,      // 16px
+  '3xl': 1.5rem,    // 24px
+  'full': 9999px
+);
+
+// Largeurs de bordure
+$border-widths: (
+  '0': 0,
+  '1': 1px,
+  '2': 2px,
+  '4': 4px,
+  '8': 8px
+);
+
+// Variables CSS pour les bordures
+:root {
+  --border-radius-none: #{map-get($border-radius, 'none')};
+  --border-radius-sm: #{map-get($border-radius, 'sm')};
+  --border-radius-md: #{map-get($border-radius, 'md')};
+  --border-radius-lg: #{map-get($border-radius, 'lg')};
+  --border-radius-xl: #{map-get($border-radius, 'xl')};
+  --border-radius-2xl: #{map-get($border-radius, '2xl')};
+  --border-radius-full: #{map-get($border-radius, 'full')};
+  
+  --border-width-1: #{map-get($border-widths, '1')};
+  --border-width-2: #{map-get($border-widths, '2')};
+  --border-width-4: #{map-get($border-widths, '4')};
+}
+
+// ========================================
+// 📱 BREAKPOINTS RESPONSIVE
+// ========================================
+
+$breakpoints: (
+  'xs': 0,
+  'sm': 576px,
+  'md': 768px,
+  'lg': 992px,
+  'xl': 1200px,
+  '2xl': 1400px
+);
+
+// Variables CSS pour les breakpoints
+:root {
+  --breakpoint-sm: #{map-get($breakpoints, 'sm')};
+  --breakpoint-md: #{map-get($breakpoints, 'md')};
+  --breakpoint-lg: #{map-get($breakpoints, 'lg')};
+  --breakpoint-xl: #{map-get($breakpoints, 'xl')};
+  --breakpoint-2xl: #{map-get($breakpoints, '2xl')};
+}
+
+// ========================================
+// 🎯 Z-INDEX
+// ========================================
+
+$z-indexes: (
+  'dropdown': 1000,
+  'sticky': 1020,
+  'fixed': 1030,
+  'modal-backdrop': 1040,
+  'modal': 1050,
+  'popover': 1060,
+  'tooltip': 1070,
+  'toast': 1080,
+  'supreme': 9999
+);
+
+// Variables CSS pour les z-index
+:root {
+  --z-dropdown: #{map-get($z-indexes, 'dropdown')};
+  --z-modal: #{map-get($z-indexes, 'modal')};
+  --z-toast: #{map-get($z-indexes, 'toast')};
+  --z-tooltip: #{map-get($z-indexes, 'tooltip')};
+}
+
+// ========================================
+// ⏱️ TRANSITIONS ET ANIMATIONS
+// ========================================
+
+// Durées de transition
+$durations: (
+  'instant': 0ms,
+  'fast': 150ms,
+  'normal': 200ms,
+  'slow': 300ms,
+  'slower': 500ms
+);
+
+// Courbes d'easing
+$easings: (
+  'linear': cubic-bezier(0, 0, 1, 1),
+  'ease': cubic-bezier(0.25, 0.1, 0.25, 1),
+  'ease-in': cubic-bezier(0.42, 0, 1, 1),
+  'ease-out': cubic-bezier(0, 0, 0.58, 1),
+  'ease-in-out': cubic-bezier(0.42, 0, 0.58, 1),
+  'bounce': cubic-bezier(0.68, -0.55, 0.265, 1.55),
+  'spring': cubic-bezier(0.175, 0.885, 0.32, 1.275)
+);
+
+// Variables CSS pour les animations
+:root {
+  --duration-fast: #{map-get($durations, 'fast')};
+  --duration-normal: #{map-get($durations, 'normal')};
+  --duration-slow: #{map-get($durations, 'slow')};
+  
+  --easing-ease: #{map-get($easings, 'ease')};
+  --easing-ease-in-out: #{map-get($easings, 'ease-in-out')};
+  --easing-bounce: #{map-get($easings, 'bounce')};
+}
+
+// ========================================
+// 📐 DIMENSIONS
+// ========================================
+
+// Hauteurs de composants
+$component-heights: (
+  'sm': 2rem,      // 32px
+  'md': 2.5rem,    // 40px
+  'lg': 3rem,      // 48px
+  'xl': 3.5rem     // 56px
+);
+
+// Largeurs communes
+$common-widths: (
+  'sidebar': 280px,
+  'sidebar-collapsed': 64px,
+  'content-max': 1200px,
+  'modal-sm': 400px,
+  'modal-md': 600px,
+  'modal-lg': 800px,
+  'modal-xl': 1200px
+);
+
+// Variables CSS pour les dimensions
+:root {
+  --height-sm: #{map-get($component-heights, 'sm')};
+  --height-md: #{map-get($component-heights, 'md')};
+  --height-lg: #{map-get($component-heights, 'lg')};
+  --height-xl: #{map-get($component-heights, 'xl')};
+  
+  --width-sidebar: #{map-get($common-widths, 'sidebar')};
+  --width-sidebar-collapsed: #{map-get($common-widths, 'sidebar-collapsed')};
+  --width-content-max: #{map-get($common-widths, 'content-max')};
+}
+
+// ========================================
+// 🎛️ VARIABLES DE DÉVELOPPEMENT
+// ========================================
+
+// Environnement (sera remplacé par le build)
+$env: 'development' !default;
+
+// Mode debug
+$debug-mode: false !default;
+
+// Grille de développement
+$dev-grid-size: 20px !default;
+$dev-grid-color: rgba(255, 0, 0, 0.1) !default;
+
+// Variables pour les tests
+$test-mode: false !default;

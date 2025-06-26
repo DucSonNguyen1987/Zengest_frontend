@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 import Button from '../Button/Button';
 
 // Styles
-import '../../../styles/components/Pagination.scss';
+//import '@styles/components/Pagination.scss';
 
 // ========================================
 // 🎯 COMPOSANT PAGINATION PRINCIPAL

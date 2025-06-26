@@ -1,11 +1,43 @@
 // shared/utils/formatters.js - Fonctions de formatage partagées
 
-import { 
-  RESERVATION_STATUS_LABELS, 
-  RESERVATION_STATUS_COLORS,
-  ORDER_STATUS_LABELS,
-  ORDER_STATUS_COLORS 
-} from '../constants';
+const RESERVATION_STATUS_LABELS = {
+  pending: 'En attente',
+  confirmed: 'Confirmée',
+  cancelled: 'Annulée',
+  completed: 'Terminée',
+  seated: 'Installée',
+  no_show: 'Absent'
+};
+
+const RESERVATION_STATUS_COLORS = {
+  pending: 'warning',
+  confirmed: 'success',
+  cancelled: 'danger',
+  completed: 'info',
+  seated: 'primary',
+  no_show: 'dark'
+};
+
+const ORDER_STATUS_LABELS = {
+  pending: 'En attente',
+  confirmed: 'Confirmée',
+  preparing: 'En préparation',
+  ready: 'Prête',
+  served: 'Servie',
+  paid: 'Payée',
+  cancelled: 'Annulée'
+};
+
+const ORDER_STATUS_COLORS = {
+  pending: 'warning',
+  confirmed: 'info', 
+  preparing: 'primary',
+  ready: 'success',
+  served: 'success',
+  paid: 'success',
+  cancelled: 'danger'
+};
+
 
 // ========================================
 // 📅 FORMATAGE DATES ET HEURES

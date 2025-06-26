@@ -7,9 +7,9 @@ import {
     UserGroupIcon,
     PhoneIcon,
     EnvelopeIcon,
-    ChatBubbleLeftEllipseIcon,
+    ChatBubbleLeftEllipsisIcon,
     CheckCircleIcon,
-    XcircleIcon,
+    XCircleIcon,
     PencilIcon,
     TableCellsIcon,
     ExclamationTriangleIcon,
@@ -21,8 +21,8 @@ import ConfirmModal from '../../common/Modal/ConfirmModal.jsx';
 
 
 // Utilitaires
-import { formatDate, formatTime, formatDateTime } from '../../../utils/formatters/formatters.js';
-import { RESERVATION_STATUS } from '../../../../../shared/constants/constants.js';
+import { formatDate, formatTime, formatDateTime } from '@utils/formatters/formatters.js';
+import { RESERVATION_STATUS } from '@shared/constants/constants.js';
 
 // Styles 
 import '../../../styles/components/ReservationDetailsModal.scss';

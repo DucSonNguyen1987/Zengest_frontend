@@ -1,4 +1,4 @@
-// web-admin/src/pages/Dashboard/Dashboard.jsx - VERSION AVEC ALIAS CORRIGÉS
+// web-admin/src/pages/Dashboard/Dashboard.jsx - VERSION ADAPTÉE BULMA
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -20,14 +20,14 @@ import {
 } from '@heroicons/react/24/outline';
 
 // === COMPOSANTS ===
-import { Input, Button, LoadingSpinner } from '@/components/common';
+import { Input, Button } from '@/components/common';
 import ReservationDetailsModal from '@/components/reservations/ReservationDetailsModal/ReservationDetailsModal';
 import MenuCategoryFormModal from '@/components/menu/MenuCategoryFormModal/MenuCategoryFormModal';
 import ReservationFormModal from '@/components/reservations/ReservationForm/ReservationFormModal';
 
 // === HOOKS ===
 import { useDocumentTitle } from '@/hooks/ui/useDocumentTitle';
-import { useReservationHandlers } from '@/hooks/reservations/useReservationHandlers';
+import useReservationHandlers from '@/hooks/reservations/useReservationHandlers';
 
 // === UTILITAIRES PARTAGÉS ===
 import { 
@@ -260,14 +260,18 @@ const Dashboard = () => {
       <div className="container is-fluid">
         
         {/* En-tête avec recherche */}
-        <div className="dashboard-header">
+        <div className="dashboard-header mb-5">
           <div className="level">
             <div className="level-left">
               <div className="level-item">
                 <div>
                   <h1 className="title is-3">
-                    <HomeIcon className="h-8 w-8 mr-3" />
-                    Dashboard Zengest
+                    <span className="icon-text">
+                      <span className="icon">
+                        <HomeIcon className="icon is-small" />
+                      </span>
+                      <span>Dashboard Zengest</span>
+                    </span>
                   </h1>
                   <p className="subtitle is-5">
                     Tableau de bord - {formatDate(new Date())}
@@ -278,93 +282,131 @@ const Dashboard = () => {
             
             <div className="level-right">
               <div className="level-item">
-                <Input
-                  placeholder="Rechercher..."
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  leftIcon={HomeIcon}
-                  size="medium"
-                  className="dashboard-search"
-                />
+                <div className="field has-addons">
+                  <div className="control has-icons-left">
+                    <input
+                      className="input"
+                      type="text"
+                      placeholder="Rechercher..."
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                    />
+                    <span className="icon is-small is-left">
+                      <HomeIcon />
+                    </span>
+                  </div>
+                </div>
               </div>
               
               <div className="level-item">
-                <Button
-                  variant="primary"
-                  leftIcon={BellIcon}
+                <button
+                  className="button is-primary"
                   onClick={() => toast.info('Centre de notifications')}
                 >
-                  Notifications
-                </Button>
+                  <span className="icon">
+                    <BellIcon />
+                  </span>
+                  <span>Notifications</span>
+                </button>
               </div>
             </div>
           </div>
         </div>
 
         {/* Statistiques principales */}
-        <div className="dashboard-stats">
-          <div className="columns is-mobile">
+        <div className="dashboard-stats mb-5">
+          <div className="columns">
             <div className="column">
-              <div className="box stats-card">
-                <div className="stats-content">
-                  <div className="stats-icon has-text-primary">
-                    <CalendarDaysIcon className="h-8 w-8" />
+              <div className="box has-background-white">
+                <div className="level is-mobile">
+                  <div className="level-left">
+                    <div className="level-item">
+                      <div>
+                        <p className="heading">Réservations</p>
+                        <p className="title is-4">{stats.totalReservations}</p>
+                        <p className="help has-text-warning">
+                          {stats.pendingReservations} en attente
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="stats-info">
-                    <p className="heading">Réservations</p>
-                    <p className="title is-4">{stats.totalReservations}</p>
-                    <p className="stats-detail">
-                      <span className="has-text-warning">
-                        {stats.pendingReservations} en attente
+                  <div className="level-right">
+                    <div className="level-item">
+                      <span className="icon has-text-primary is-large">
+                        <CalendarDaysIcon />
                       </span>
-                    </p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
             
             <div className="column">
-              <div className="box stats-card">
-                <div className="stats-content">
-                  <div className="stats-icon has-text-success">
-                    <CurrencyEuroIcon className="h-8 w-8" />
+              <div className="box has-background-white">
+                <div className="level is-mobile">
+                  <div className="level-left">
+                    <div className="level-item">
+                      <div>
+                        <p className="heading">Chiffre d'affaires</p>
+                        <p className="title is-4">{formatCurrency(stats.totalRevenue)}</p>
+                        <p className="help">
+                          Panier moyen: {formatCurrency(stats.avgOrderValue)}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="stats-info">
-                    <p className="heading">Chiffre d'affaires</p>
-                    <p className="title is-4">{formatCurrency(stats.totalRevenue)}</p>
-                    <p className="stats-detail">
-                      Panier moyen: {formatCurrency(stats.avgOrderValue)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="column">
-              <div className="box stats-card">
-                <div className="stats-content">
-                  <div className="stats-icon has-text-info">
-                    <ShoppingBagIcon className="h-8 w-8" />
-                  </div>
-                  <div className="stats-info">
-                    <p className="heading">Commandes actives</p>
-                    <p className="title is-4">{stats.activeOrders}</p>
-                    <p className="stats-detail">En cours de traitement</p>
+                  <div className="level-right">
+                    <div className="level-item">
+                      <span className="icon has-text-success is-large">
+                        <CurrencyEuroIcon />
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
             
             <div className="column">
-              <div className="box stats-card">
-                <div className="stats-content">
-                  <div className="stats-icon has-text-warning">
-                    <TableCellsIcon className="h-8 w-8" />
+              <div className="box has-background-white">
+                <div className="level is-mobile">
+                  <div className="level-left">
+                    <div className="level-item">
+                      <div>
+                        <p className="heading">Commandes actives</p>
+                        <p className="title is-4">{stats.activeOrders}</p>
+                        <p className="help">En cours de traitement</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="stats-info">
-                    <p className="heading">Tables</p>
-                    <p className="title is-4">{stats.availableTables}/{stats.totalTables}</p>
-                    <p className="stats-detail">Disponibles</p>
+                  <div className="level-right">
+                    <div className="level-item">
+                      <span className="icon has-text-info is-large">
+                        <ShoppingBagIcon />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="column">
+              <div className="box has-background-white">
+                <div className="level is-mobile">
+                  <div className="level-left">
+                    <div className="level-item">
+                      <div>
+                        <p className="heading">Tables</p>
+                        <p className="title is-4">{stats.availableTables}/{stats.totalTables}</p>
+                        <p className="help">Disponibles</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="level-right">
+                    <div className="level-item">
+                      <span className="icon has-text-warning is-large">
+                        <TableCellsIcon />
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -373,62 +415,72 @@ const Dashboard = () => {
         </div>
 
         {/* Section de test des composants */}
-        <div className="component-testing-section">
+        <div className="component-testing-section mb-5">
           <div className="box">
             <h2 className="title is-4">
-              <Cog6ToothIcon className="h-6 w-6 mr-2" />
-              Test des Composants Phase 1
+              <span className="icon-text">
+                <span className="icon">
+                  <Cog6ToothIcon />
+                </span>
+                <span>Test des Composants Phase 1</span>
+              </span>
             </h2>
             
             <div className="columns">
               <div className="column">
                 <h3 className="title is-5">Modals de test</h3>
                 <div className="buttons">
-                  <Button
-                    variant="primary"
-                    leftIcon={EyeIcon}
+                  <button
+                    className="button is-primary"
                     onClick={() => handleTestReservationModal(recentReservations[0])}
                   >
-                    Tester Modal Réservation
-                  </Button>
+                    <span className="icon">
+                      <EyeIcon />
+                    </span>
+                    <span>Tester Modal Réservation</span>
+                  </button>
                   
-                  <Button
-                    variant="success"
-                    leftIcon={PlusIcon}
+                  <button
+                    className="button is-success"
                     onClick={handleTestCategoryModal}
                   >
-                    Tester Modal Catégorie
-                  </Button>
+                    <span className="icon">
+                      <PlusIcon />
+                    </span>
+                    <span>Tester Modal Catégorie</span>
+                  </button>
                 </div>
               </div>
               
               <div className="column">
                 <h3 className="title is-5">Actions rapides</h3>
                 <div className="buttons">
-                  <Button
-                    variant="info"
-                    leftIcon={ChartBarIcon}
+                  <button
+                    className={`button is-info ${loading ? 'is-loading' : ''}`}
                     onClick={() => handleQuickAction('refresh')}
-                    loading={loading}
+                    disabled={loading}
                   >
-                    Actualiser
-                  </Button>
+                    <span className="icon">
+                      <ChartBarIcon />
+                    </span>
+                    <span>Actualiser</span>
+                  </button>
                   
-                  <Button
-                    variant="warning"
+                  <button
+                    className={`button is-warning ${loading ? 'is-loading' : ''}`}
                     onClick={() => handleQuickAction('backup')}
-                    loading={loading}
+                    disabled={loading}
                   >
-                    Sauvegarde
-                  </Button>
+                    <span>Sauvegarde</span>
+                  </button>
                   
-                  <Button
-                    variant="outline"
+                  <button
+                    className={`button is-outlined ${loading ? 'is-loading' : ''}`}
                     onClick={() => handleQuickAction('reports')}
-                    loading={loading}
+                    disabled={loading}
                   >
-                    Rapports
-                  </Button>
+                    <span>Rapports</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -441,54 +493,87 @@ const Dashboard = () => {
           {/* Réservations récentes */}
           <div className="column is-half">
             <div className="box">
-              <header className="box-header">
-                <h3 className="title is-5">
-                  <CalendarDaysIcon className="h-5 w-5 mr-2" />
-                  Réservations récentes
-                </h3>
-                <Link to="/reservations" className="button is-small is-primary">
-                  Voir tout
-                </Link>
+              <header className="box-header level">
+                <div className="level-left">
+                  <h3 className="title is-5">
+                    <span className="icon-text">
+                      <span className="icon">
+                        <CalendarDaysIcon />
+                      </span>
+                      <span>Réservations récentes</span>
+                    </span>
+                  </h3>
+                </div>
+                <div className="level-right">
+                  <Link to="/reservations" className="button is-small is-primary">
+                    Voir tout
+                  </Link>
+                </div>
               </header>
               
               <div className="reservation-list">
                 {recentReservations.map((reservation) => (
-                  <div key={reservation._id} className="reservation-item">
-                    <div className="reservation-info">
-                      <div className="customer-name">
-                        {reservation.customer.firstName} {reservation.customer.lastName}
+                  <div key={reservation._id} className="box is-shadowless has-background-light mb-3">
+                    <div className="level is-mobile">
+                      <div className="level-left">
+                        <div className="level-item">
+                          <div>
+                            <p className="has-text-weight-semibold">
+                              {reservation.customer.firstName} {reservation.customer.lastName}
+                            </p>
+                            <div className="is-size-7 has-text-grey">
+                              <span className="mr-3">
+                                <span className="icon is-small">
+                                  <ClockIcon />
+                                </span>
+                                {formatTime(reservation.dateTime)}
+                              </span>
+                              <span className="mr-3">
+                                <span className="icon is-small">
+                                  <UserGroupIcon />
+                                </span>
+                                {formatGuestCount(reservation.guestsCount)}
+                              </span>
+                              {reservation.table && (
+                                <span>
+                                  <span className="icon is-small">
+                                    <TableCellsIcon />
+                                  </span>
+                                  Table {reservation.table.number}
+                                </span>
+                              )}
+                            </div>
+                            {reservation.specialRequests && (
+                              <p className="is-size-7 has-text-grey-dark mt-1">
+                                {truncateText(reservation.specialRequests, 40)}
+                              </p>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                      <div className="reservation-details">
-                        <span className="time">
-                          {formatTime(reservation.dateTime)}
-                        </span>
-                        <span className="guests">
-                          {formatGuestCount(reservation.guestsCount)}
-                        </span>
-                        {reservation.table && (
-                          <span className="table">
-                            Table {reservation.table.number}
-                          </span>
-                        )}
-                      </div>
-                      <div className="special-requests">
-                        {truncateText(reservation.specialRequests, 40)}
-                      </div>
-                    </div>
-                    
-                    <div className="reservation-actions">
-                      <span className={`tag is-${getStatusColor(reservation.status)}`}>
-                        {formatStatus(reservation.status)}
-                      </span>
                       
-                      <Button
-                        size="small"
-                        variant="outline"
-                        leftIcon={EyeIcon}
-                        onClick={() => handleTestReservationModal(reservation)}
-                      >
-                        Voir
-                      </Button>
+                      <div className="level-right">
+                        <div className="level-item">
+                          <div className="field is-grouped">
+                            <div className="control">
+                              <span className={`tag is-${getStatusColor(reservation.status)}`}>
+                                {formatStatus(reservation.status)}
+                              </span>
+                            </div>
+                            <div className="control">
+                              <button
+                                className="button is-small is-outlined"
+                                onClick={() => handleTestReservationModal(reservation)}
+                              >
+                                <span className="icon is-small">
+                                  <EyeIcon />
+                                </span>
+                                <span>Voir</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -499,53 +584,77 @@ const Dashboard = () => {
           {/* Commandes en cours */}
           <div className="column is-half">
             <div className="box">
-              <header className="box-header">
-                <h3 className="title is-5">
-                  <ShoppingBagIcon className="h-5 w-5 mr-2" />
-                  Commandes en cours
-                </h3>
-                <Link to="/orders" className="button is-small is-primary">
-                  Voir tout
-                </Link>
+              <header className="box-header level">
+                <div className="level-left">
+                  <h3 className="title is-5">
+                    <span className="icon-text">
+                      <span className="icon">
+                        <ShoppingBagIcon />
+                      </span>
+                      <span>Commandes en cours</span>
+                    </span>
+                  </h3>
+                </div>
+                <div className="level-right">
+                  <Link to="/orders" className="button is-small is-primary">
+                    Voir tout
+                  </Link>
+                </div>
               </header>
               
               <div className="orders-list">
                 {recentOrders.map((order) => (
-                  <div key={order.id} className="order-item">
-                    <div className="order-info">
-                      <div className="order-header">
-                        <span className="order-id">{order.id}</span>
-                        <span className="order-table">Table {order.table}</span>
+                  <div key={order.id} className="box is-shadowless has-background-light mb-3">
+                    <div className="level is-mobile">
+                      <div className="level-left">
+                        <div className="level-item">
+                          <div>
+                            <div className="level is-mobile mb-2">
+                              <div className="level-left">
+                                <span className="has-text-weight-semibold">{order.id}</span>
+                              </div>
+                              <div className="level-right">
+                                <span className="tag is-light">Table {order.table}</span>
+                              </div>
+                            </div>
+                            
+                            <div className="content is-small">
+                              {order.items.slice(0, 2).map((item, index) => (
+                                <span key={index}>
+                                  {item}
+                                  {index < Math.min(order.items.length, 2) - 1 && ', '}
+                                </span>
+                              ))}
+                              {order.items.length > 2 && (
+                                <span className="has-text-grey">
+                                  {' '}+{order.items.length - 2} autre{order.items.length > 3 ? 's' : ''}
+                                </span>
+                              )}
+                            </div>
+                            
+                            <div className="level is-mobile is-size-7">
+                              <div className="level-left">
+                                <span className="has-text-weight-semibold">
+                                  {formatCurrency(order.total)}
+                                </span>
+                              </div>
+                              <div className="level-right">
+                                <span className="has-text-grey">
+                                  {formatTimeAgo(order.createdAt)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                       
-                      <div className="order-items">
-                        {order.items.slice(0, 2).map((item, index) => (
-                          <span key={index} className="item-name">
-                            {item}
-                            {index < Math.min(order.items.length, 2) - 1 && ', '}
+                      <div className="level-right">
+                        <div className="level-item">
+                          <span className={`tag is-${getStatusColor(order.status, 'order')}`}>
+                            {formatStatus(order.status, 'order')}
                           </span>
-                        ))}
-                        {order.items.length > 2 && (
-                          <span className="items-more">
-                            +{order.items.length - 2} autre{order.items.length > 3 ? 's' : ''}
-                          </span>
-                        )}
+                        </div>
                       </div>
-                      
-                      <div className="order-meta">
-                        <span className="order-total">
-                          {formatCurrency(order.total)}
-                        </span>
-                        <span className="order-time">
-                          {formatTimeAgo(order.createdAt)}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="order-status">
-                      <span className={`tag is-${getStatusColor(order.status, 'order')}`}>
-                        {formatStatus(order.status, 'order')}
-                      </span>
                     </div>
                   </div>
                 ))}
@@ -555,55 +664,55 @@ const Dashboard = () => {
         </div>
 
         {/* Actions rapides */}
-        <div className="quick-actions">
+        <div className="quick-actions mb-5">
           <div className="box">
-            <h3 className="title is-5">Actions rapides</h3>
+            <h3 className="title is-5 mb-4">Actions rapides</h3>
             
             <div className="columns">
               <div className="column">
-                <Link to="/reservations" className="quick-action-card">
-                  <div className="action-icon has-text-primary">
-                    <CalendarDaysIcon className="h-12 w-12" />
-                  </div>
-                  <div className="action-content">
-                    <h4>Nouvelle réservation</h4>
-                    <p>Créer une réservation</p>
-                  </div>
-                </Link>
-              </div>
-              
-              <div className="column">
-                <Link to="/menu/categories" className="quick-action-card">
-                  <div className="action-icon has-text-success">
-                    <PlusIcon className="h-12 w-12" />
-                  </div>
-                  <div className="action-content">
-                    <h4>Ajouter un plat</h4>
-                    <p>Gérer le menu</p>
+                <Link to="/reservations" className="box has-background-primary-light has-text-primary">
+                  <div className="has-text-centered">
+                    <span className="icon is-large">
+                      <CalendarDaysIcon />
+                    </span>
+                    <h4 className="title is-6 has-text-primary">Nouvelle réservation</h4>
+                    <p className="is-size-7">Créer une réservation</p>
                   </div>
                 </Link>
               </div>
               
               <div className="column">
-                <Link to="/tables" className="quick-action-card">
-                  <div className="action-icon has-text-info">
-                    <TableCellsIcon className="h-12 w-12" />
-                  </div>
-                  <div className="action-content">
-                    <h4>Plan de salle</h4>
-                    <p>Gérer les tables</p>
+                <Link to="/menu/categories" className="box has-background-success-light has-text-success">
+                  <div className="has-text-centered">
+                    <span className="icon is-large">
+                      <PlusIcon />
+                    </span>
+                    <h4 className="title is-6 has-text-success">Ajouter un plat</h4>
+                    <p className="is-size-7">Gérer le menu</p>
                   </div>
                 </Link>
               </div>
               
               <div className="column">
-                <Link to="/analytics" className="quick-action-card">
-                  <div className="action-icon has-text-warning">
-                    <ChartBarIcon className="h-12 w-12" />
+                <Link to="/tables" className="box has-background-info-light has-text-info">
+                  <div className="has-text-centered">
+                    <span className="icon is-large">
+                      <TableCellsIcon />
+                    </span>
+                    <h4 className="title is-6 has-text-info">Plan de salle</h4>
+                    <p className="is-size-7">Gérer les tables</p>
                   </div>
-                  <div className="action-content">
-                    <h4>Analytics</h4>
-                    <p>Voir les rapports</p>
+                </Link>
+              </div>
+              
+              <div className="column">
+                <Link to="/analytics" className="box has-background-warning-light has-text-warning-dark">
+                  <div className="has-text-centered">
+                    <span className="icon is-large">
+                      <ChartBarIcon />
+                    </span>
+                    <h4 className="title is-6 has-text-warning-dark">Analytics</h4>
+                    <p className="is-size-7">Voir les rapports</p>
                   </div>
                 </Link>
               </div>
@@ -615,8 +724,12 @@ const Dashboard = () => {
         <div className="debug-section">
           <div className="notification is-light">
             <h5 className="title is-6">
-              <CheckCircleIcon className="h-5 w-5 mr-2" />
-              Phase 1 - Tests fonctionnels
+              <span className="icon-text">
+                <span className="icon has-text-success">
+                  <CheckCircleIcon />
+                </span>
+                <span>Phase 1 - Tests fonctionnels</span>
+              </span>
             </h5>
             <div className="content">
               <div className="columns">
@@ -638,10 +751,12 @@ const Dashboard = () => {
                 </div>
               </div>
               
-              <div className="test-status">
+              <div className="test-status mt-4">
                 <span className="tag is-success is-large">
-                  <CheckCircleIcon className="h-4 w-4 mr-1" />
-                  Phase 1 - Alias configurés
+                  <span className="icon">
+                    <CheckCircleIcon />
+                  </span>
+                  <span>Phase 1 - Bulma Classes Adaptées</span>
                 </span>
               </div>
             </div>

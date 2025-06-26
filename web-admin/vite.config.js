@@ -7,6 +7,13 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
+
+            // === ALIAS WORKSPACE SHARED ===
+      '@shared': path.resolve(__dirname, '../shared'),
+      '@shared/constants': path.resolve(__dirname, '../shared/constants'),
+      '@shared/utils': path.resolve(__dirname, '../shared/utils'),
+
+
       // === ALIAS INTERNES WEB-ADMIN ===
       '@': path.resolve(__dirname, './src'),
       '@components': path.resolve(__dirname, './src/components'),
@@ -18,12 +25,7 @@ export default defineConfig({
       '@styles': path.resolve(__dirname, './src/styles'),
       '@assets': path.resolve(__dirname, './src/assets'),
       
-      // === ALIAS WORKSPACE SHARED ===
-      '@shared': path.resolve(__dirname, '../shared'),
-      '@shared/constants': path.resolve(__dirname, '../shared/constants'),
-      '@shared/utils': path.resolve(__dirname, '../shared/utils'),
-      '@shared/types': path.resolve(__dirname, '../shared/types'),
-      '@shared/hooks': path.resolve(__dirname, '../shared/hooks'),
+      
     }
   },
   server: {

@@ -1,4 +1,4 @@
-@import '../variables.css';
+// @import '../variables.scss';
 
 // STYLES IMPUT REUTILISABLE
 
@@ -209,8 +209,8 @@
 
 // Icones
 
-.iput-icon {
-    position: rabsolute;
+.input-icon {
+    position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
